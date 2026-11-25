@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shop Manager Pro</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg">
+<meta name="theme-color" content="#0b1b2e">
+<style>
+:root{--bg:#f2f5f3;--cd:#fff;--tx:#10202e;--mu:#5a6a78;--ac:#0b8a4a;--wa:#a85f00;--bd:#d6dfe0}
+:root[data-t=dark]{--bg:#0b1b2e;--cd:#132a42;--tx:#e8eef4;--mu:#92a5b6;--ac:#3ddc84;--wa:#ffb74d;--bd:#26435f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,sans-serif;padding:env(safe-area-inset-top) 0 calc(66px + env(safe-area-inset-bottom))}
+main{max-width:720px;margin:auto;padding:8px 10px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 10px;max-width:720px;margin:auto}
+header h1{font-size:17px;margin:0 0 6px;display:flex;justify-content:space-between;align-items:center}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ac);display:inline-block}.dot.off{background:var(--wa)}
+.dn{display:flex;gap:6px}.dn input{flex:1;min-width:0}
+input,select,textarea,button{font:inherit;color:var(--tx);background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:10px;min-height:44px}
+button{cursor:pointer;font-weight:600}button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.hid{display:none!important}.mu{color:var(--mu)}small{color:var(--mu)}
+#q{width:100%;font-size:18px;padding:14px}
+.qr{display:flex;gap:6px;margin:6px 0}.qr button{flex:1}
+#pv{min-height:20px;font-size:13px;color:var(--ac)}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px 10px}.c b{display:block;font-size:17px}
+.c.g1 b{color:var(--ac)}.c.w b{color:var(--wa)}
+.r{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:9px 10px;margin:5px 0}
+.r.unverified{border-left:4px solid var(--wa)}.r.cancelled{opacity:.5;text-decoration:line-through}
+.bd{font-size:12px;color:var(--mu);margin-top:3px}.bd i{font-style:normal;color:var(--wa)}
+h2{font-size:15px;margin:12px 0 4px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;border-radius:0;background:none;min-height:52px}nav button.on{color:var(--ac);box-shadow:inset 0 3px var(--ac)}
+dialog{width:min(560px,94vw);background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:14px;padding:12px}
+dialog::backdrop{background:#0008}
+.fm{display:grid;gap:6px}.fm label{display:grid;gap:2px;font-size:12px;color:var(--mu)}.f2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#rt{width:100%;height:46vh;font:13px/1.35 ui-monospace,monospace}
+#toast{position:fixed;left:10px;right:10px;bottom:calc(72px + env(safe-area-inset-bottom));background:#10202e;color:#fff;padding:10px 12px;border-radius:10px;z-index:9;display:flex;justify-content:space-between;gap:8px}
+#toast button{min-height:30px;padding:2px 10px}
+#pr{display:none}
+@media print{body>*{display:none!important}#pr{display:block!important;white-space:pre-wrap;font:13px/1.4 monospace;color:#000}}
+</style></head><body>
+<header><h1><span id="sn">Shop Manager Pro</span><span><small id="ol">online</small> <span class="dot" id="dot"></span></span></h1>
+<div class="dn"><button data-a="prev" aria-label="Pichla din">◀</button><input type="date" id="dp" aria-label="Date"><button data-a="next" aria-label="Agla din">▶</button></div></header>
+<main>
+<section id="v-home">
+<div id="bk" class="r hid"><b>Backup le lo.</b> <small>7 din se zyada ho gaye.</small> <button data-a="bak">Backup</button></div>
+<input id="q" placeholder="Likho: Battery sell 180" autocomplete="off" enterkeyhint="done" aria-label="Quick entry">
+<div id="pv" aria-live="polite"></div>
+<div class="qr"><button class="p" data-a="qs">Save</button><button data-a="new">+ Detail</button><button data-a="rep">Aaj ka Hisaab</button></div>
+<h2 id="dl"></h2><div class="g" id="dash"></div>
+<div id="tk"></div><div id="un"></div>
+<h2>Aaj ki entries</h2><div id="ls"></div>
+</section>
+<section id="v-khata" class="hid"><h2>Udhaar ledger (sab din)</h2><div id="kh"></div></section>
+<section id="v-search" class="hid"><h2>Search</h2>
+<div class="fm"><input id="sq" placeholder="Naam, note, category..." aria-label="Search">
+<div class="f2"><select id="sk"><option value="">Sab type</option></select><select id="ss"><option value="">Sab shop</option><option>Shop 1</option><option>Shop 2</option></select></div>
+<div class="f2"><input type="date" id="sa" aria-label="From"><input type="date" id="sb" aria-label="To"></div></div><div id="sr"></div></section>
+<section id="v-set" class="hid"><h2>Settings</h2><div class="fm">
+<label>Shop ka naam<input id="s_n"></label>
+<label>Theme<select id="s_t"><option value="">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="s_a" style="min-height:0"> Bina payment likhe sale = poora cash mila maano</label>
+<button class="p" data-a="bak">Backup (JSON)</button><button data-a="csv">Sab entries CSV</button>
+<button data-a="imp">Backup restore / merge</button><input type="file" id="fi" accept=".json" class="hid">
+<p id="hl" class="mu"></p><button data-a="rst">Reset app data</button></div></section>
+</main>
+<nav><button data-a="v:home" class="on">Home</button><button data-a="v:khata">Udhaar</button><button data-a="v:search">Search</button><button data-a="v:set">Settings</button></nav>
+<dialog id="ed"><div class="fm"><textarea id="f_raw" rows="2" placeholder="Description / note"></textarea>
+<div class="f2"><label>Type<select id="f_kind"></select></label><label>Category<input id="f_cat"></label></div>
+<div class="f2"><label>Total ₹<input id="f_amt" inputmode="decimal"></label><label>Baaki (udhaar) ₹<input id="f_out" inputmode="decimal"></label></div>
+<div class="f2"><label>Mila ₹ (confirmed)<input id="f_paid" inputmode="decimal"></label><label>Method<select id="f_m"><option value="">—</option><option value="cash">Cash</option><option value="upi">UPI</option><option value="bank">Bank</option><option value="other">Other</option></select></label></div>
+<div class="f2"><button data-a="fp:cash">Poora mila: Cash</button><button data-a="fp:upi">Poora mila: UPI</button></div>
+<div class="f2"><label>Customer<input id="f_c"></label><label>Shop<input id="f_s" list="shl"></label></div><datalist id="shl"><option>Shop 1</option><option>Shop 2</option></datalist>
+<div class="f2"><label>Status<select id="f_st"><option value="ok">Confirmed</option><option value="unverified">Unverified</option><option value="cancelled">Cancelled</option></select></label><label>Task due<input type="date" id="f_due"></label></div>
+<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="f_done" style="min-height:0"> Task poora hua</label>
+<small id="f_err" style="color:#d33"></small>
+<div class="f2"><button class="p" data-a="fs">Save</button><button data-a="fx">Band</button></div>
+<div class="f2"><button data-a="fd">Duplicate</button><button data-a="fk">Delete</button></div></div></dialog>
+<dialog id="rd"><div class="fm"><label>Opening cash ₹ (optional)<input id="op" inputmode="decimal"></label><textarea id="rt" readonly></textarea>
+<div class="f2"><button class="p" data-a="rc">Copy</button><button data-a="rs">Share</button><button data-a="rp">Print</button><button data-a="rv">Day CSV</button></div><button data-a="rx">Band</button></div></dialog>
+<div id="pr"></div><div id="toast" class="hid"></div>
+<script>
+const $=s=>document.querySelector(s),KL={sale:'Sale',expense:'Kharcha',refund:'Refund',repay:'Udhaar jama',task:'Task',note:'Note'};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const R=p=>'₹'+(p/100).toLocaleString('en-IN',{maximumFractionDigits:2}),fd=d=>d.split('-').reverse().join('/');
+const sh=(d,n)=>{const t=new Date(d+'T12:00:00');t.setDate(t.getDate()+n);return t.toLocaleDateString('en-CA')};
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+const P=v=>{v=String(v).trim();if(v==='')return null;const n=parseFloat(v);return isNaN(n)?NaN:Math.round(n*100)};
+const A=new Map();let db,busy=0,cur=null,lim=50,S={date:'2026-10-28',shop:'Meri Dukaan',assume:0,theme:'',op:{},lb:0};
+const kvg=k=>new Promise(r=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result&&q.result.v);q.onerror=()=>r()});
+const kvs=(k,v)=>new Promise(r=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put({k,v});t.oncomplete=r;t.onerror=r});
+const sv=()=>kvs('s',{...S});
+const put=(r,act,b)=>new Promise((ok,no)=>{const t=db.transaction(['tx','log'],'readwrite');t.objectStore('tx').put(r);if(act)t.objectStore('log').put({id:uid(),tid:r.id,t:Date.now(),act,before:b||null});t.oncomplete=()=>{A.set(r.id,r);ok()};t.onerror=t.onabort=()=>no(t.error||new Error('write fail'))});
+const del=x=>new Promise((ok,no)=>{const t=db.transaction(['tx','log'],'readwrite');t.objectStore('tx').delete(x.id);t.objectStore('log').put({id:uid(),tid:x.id,t:Date.now(),act:'delete',before:x});t.oncomplete=()=>{A.delete(x.id);ok()};t.onerror=t.onabort=()=>no(t.error||new Error('delete fail'))});
+const bulk=r=>new Promise((ok,no)=>{const t=db.transaction('tx','readwrite');r.forEach(x=>t.objectStore('tx').put(x));t.oncomplete=()=>{r.forEach(x=>A.set(x.id,x));ok()};t.onerror=t.onabort=()=>no(t.error||new Error('bulk fail'))});
+function toast(m,undo){const t=$('#toast');t.innerHTML='<span>'+esc(m)+'</span>'+(undo?'<button>Undo</button>':'');t.classList.remove('hid');if(undo)t.querySelector('button').onclick=()=>{t.classList.add('hid');undo()};clearTimeout(toast.T);toast.T=setTimeout(()=>t.classList.add('hid'),undo?6000:2200)}
+function parse(raw){
+ const r={kind:'note',cat:'Note',amt:null,out:null,method:null,shop:null,status:'ok'};
+ const s=raw.replace(/shop\s*([12])/i,(m,n)=>{r.shop='Shop '+n;return' '});
+ if(/upi|gpay|phonepe|paytm/i.test(s))r.method='upi';else if(/\bcash\b/i.test(s))r.method='cash';
+ const u=s.match(/(\d+)\s*(udhaar|udhar|baki|baaki|due)/i),rest=u?s.replace(u[0],' '):s;
+ const n=[...rest.matchAll(/(?<![A-Za-z\d.\/])(\d+(?:\.\d+)?)(?![A-Za-z\d\/])(?!\s*(?:set|sets|pcs|pc|piece|nos|qty))/gi)].map(x=>+x[1]);
+ if(n.length!==1)return r;
+ const a=Math.round(n[0]*100),o=u?Math.round(u[1]*100):null;if(o!=null&&o>a)return r;
+ r.amt=a;r.out=o;r.kind=/kharch|expense|chai|rent|nashta/i.test(s)?'expense':/refund/i.test(s)?'refund':'sale';
+ if(/pending|\?|shayad|check/i.test(s))r.status='unverified';
+ r.cat=/recharge/i.test(s)?'Recharge':/battery/i.test(s)?'Battery':/pin|charg|cable/i.test(s)?'Charging pin/parts':/cover|glass|guard/i.test(s)?'Accessories':/repair|setup|switch|not on|software/i.test(s)?'Mobile repair':'Other';
+ return r}
+const mk=p=>({id:uid(),date:S.date,created:Date.now(),raw:p.raw,kind:p.kind,cat:p.cat,amt:p.amt,out:p.out,paid:null,method:p.method,shop:p.shop,status:p.status,cust:'',hist:false,due:null,done:false});
+function sum(L){const m={sales:0,unv:0,cash:0,upi:0,oth:0,cr:0,exp:0,ref:0,rep:0,unc:0,n:L.length,jobs:0};
+ const add=(k,v)=>{if(k==='upi')m.upi+=v;else if(k==='cash')m.cash+=v;else m.oth+=v};
+ for(const x of L){if(x.status==='cancelled')continue;
+  if(x.kind==='sale'){if(x.status==='unverified'){m.unv+=x.amt;continue}
+   m.sales+=x.amt;m.jobs++;m.cr+=x.out||0;let p=x.paid;if(p==null&&S.assume&&x.out==null)p=x.amt;
+   if(p==null)m.unc+=x.amt-(x.out||0);else if(x.pays&&x.pays.length)x.pays.forEach(y=>add(y.m,y.a));else add(x.method||(S.assume?'cash':''),p)}
+  else if(x.kind==='expense')m.exp+=x.amt;else if(x.kind==='refund')m.ref+=x.amt;
+  else if(x.kind==='repay'){m.rep+=x.amt;add(x.method||'cash',x.amt)}}
+ m.rec=m.cash+m.upi+m.oth;m.net=m.rec-m.exp-m.ref;return m}
+function owed(){const o={};for(const x of A.values()){if(x.status==='cancelled'||x.status==='unverified')continue;
+ if(x.kind==='sale'&&x.out){const k=x.cust||'Walk-in '+x.id.slice(-4);o[k]=(o[k]||0)+x.out}else if(x.kind==='repay'&&x.cust)o[x.cust]=(o[x.cust]||0)-x.amt}return o}
+const day=()=>[...A.values()].filter(x=>x.date===S.date).sort((a,b)=>a.created-b.created);
+function row(x,d){let t=(d?fd(x.date)+' • ':'')+KL[x.kind];if(x.amt!=null)t+=' '+R(x.amt);
+ if(x.out)t+=' • udhaar '+R(x.out);if(x.kind==='sale'&&x.status==='ok'){t+=x.paid!=null?' • mila '+R(x.paid):(S.assume&&x.out==null?'':' • <i>payment confirm nahi</i>')}
+ if(x.status==='unverified')t+=' • <i>UNVERIFIED</i>';if(x.hist)t+=' • <i>HISTORICAL</i>';if(x.cust)t+=' • '+esc(x.cust);if(x.shop)t+=' • '+esc(x.shop);
+ return `<div class="r ${x.status}" data-a="edit" data-id="${x.id}"><div>${esc(x.raw)}</div><div class="bd">${t}</div></div>`}
+function render(){
+ th();$('#sn').textContent=S.shop;$('#dp').value=S.date;
+ const L=day(),m=sum(L),C=(t,v,c)=>`<div class="c ${c||''}"><small>${t}</small><b>${v}</b></div>`;
+ $('#dl').textContent=fd(S.date)+' ka hisaab'+(L.some(x=>x.hist)?' (HISTORICAL)':'');
+ $('#dash').innerHTML=C('Confirmed sales',R(m.sales),'g1')+C('Cash mila',R(m.cash))+C('UPI mila',R(m.upi))+C('Other / method?',R(m.oth))+C('Udhaar bana',R(m.cr),'w')+C('Udhaar jama hua',R(m.rep))+C('Kharcha',R(m.exp))+C('Net cash movement',R(m.net),'g1')+C('Payment confirm nahi',R(m.unc),'w')+C('Unverified sale',R(m.unv),'w')+C('Jobs / entries',m.jobs+' / '+m.n)+C('Total udhaar (sab din)',R(Object.values(owed()).reduce((a,b)=>a+Math.max(b,0),0)),'w');
+ const T=[...A.values()].filter(x=>x.kind==='task'&&!x.done&&x.status!=='cancelled'&&(x.due||x.date)<=S.date);
+ $('#tk').innerHTML=T.length?'<h2>Pending tasks ('+T.length+')</h2>'+T.map(x=>row(x,1)).join(''):'';
+ const U=L.filter(x=>x.status==='unverified'||(x.kind==='note'));
+ $('#un').innerHTML=U.length?'<h2>Unverified / unclassified</h2>'+U.map(x=>row(x)).join(''):'';
+ $('#ls').innerHTML=L.map(x=>row(x)).join('')||'<p class="mu">Abhi koi entry nahi. Upar likho: "Battery sell 180" aur Enter dabao.</p>';
+ $('#bk').classList.toggle('hid',!(A.size&&Date.now()-S.lb>6048e5));
+ const o=owed();$('#kh').innerHTML=Object.entries(o).filter(e=>e[1]!==0).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="r"><b>${esc(k)}</b> — baaki ${R(v)} <button data-a="repay" data-c="${esc(k)}">Jama</button></div>`).join('')||'<p class="mu">Koi udhaar baaki nahi.</p>';
+ if(!$('#v-search').classList.contains('hid'))srch()}
+function srch(){const q=$('#sq').value.toLowerCase(),k=$('#sk').value,s=$('#ss').value,a=$('#sa').value,b=$('#sb').value;
+ const r=[...A.values()].filter(x=>(!q||(x.raw+' '+x.cust+' '+x.cat).toLowerCase().includes(q))&&(!k||x.kind===k)&&(!s||x.shop===s)&&(!a||x.date>=a)&&(!b||x.date<=b)).sort((x,y)=>y.date.localeCompare(x.date)||y.created-x.created);
+ $('#sr').innerHTML=(r.slice(0,lim).map(x=>row(x,1)).join('')+(r.length>lim?'<button data-a="more">Aur dikhao ('+(r.length-lim)+')</button>':''))||'<p class="mu">Kuch nahi mila.</p>'}
+const th=()=>document.documentElement.dataset.t=S.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+const q=$('#q');
+q.oninput=()=>{localStorage.d=q.value;const v=q.value.trim();if(!v){$('#pv').textContent='';return}const p=parse(v);
+ $('#pv').textContent=p.amt!=null?`${KL[p.kind]} ${R(p.amt)}${p.out!=null?' • udhaar '+R(p.out):''} • ${p.cat}${p.status==='unverified'?' • UNVERIFIED':''}`:'Note ke roop mein save hoga (amount clear nahi)'};
+q.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();qs()}};
+async function qs(){const v=q.value.trim();if(!v||busy)return;busy=1;try{const p=parse(v);p.raw=v;await put(mk(p),'add');q.value='';localStorage.d='';$('#pv').textContent='Saved ✓';render()}catch(e){toast('SAVE NAHI HUA: '+e.message)}busy=0;q.focus()}
+function setv(v){for(const s of['home','khata','search','set'])$('#v-'+s).classList.toggle('hid',s!==v);
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.a==='v:'+v));
+ if(v==='set'){$('#s_n').value=S.shop;$('#s_t').value=S.theme;$('#s_a').checked=!!S.assume;health()}render()}
+async function health(){let t=A.size+' entries';try{const e=await navigator.storage.estimate(),p=await navigator.storage.persisted();t+=' • '+(e.usage/1024).toFixed(0)+' KB use • storage '+(p?'persistent':'persistent nahi (backup zaroor lo)')}catch{}
+ $('#hl').textContent=t+' • Last backup: '+(S.lb?new Date(S.lb).toLocaleDateString('en-IN'):'kabhi nahi')}
+function openEd(x){cur=x;const n=!x;x=x||{raw:'',kind:'sale',cat:'',amt:null,out:null,paid:null,method:'',cust:'',shop:'',status:'ok',due:'',done:false};
+ $('#f_raw').value=x.raw;$('#f_kind').value=x.kind;$('#f_cat').value=x.cat||'';
+ for(const[k,f]of[['amt','amt'],['out','out'],['paid','paid']])$('#f_'+f).value=x[k]==null?'':x[k]/100;
+ $('#f_m').value=x.method||'';$('#f_c').value=x.cust||'';$('#f_s').value=x.shop||'';$('#f_st').value=x.status;$('#f_due').value=x.due||'';$('#f_done').checked=!!x.done;$('#f_err').textContent='';
+ document.querySelectorAll('[data-a=fk],[data-a=fd]').forEach(b=>b.classList.toggle('hid',n));$('#ed').showModal()}
+async function fs(){if(busy)return;const K=$('#f_kind').value,a=P($('#f_amt').value),o=P($('#f_out').value),p=P($('#f_paid').value),raw=$('#f_raw').value.trim();
+ const e=!raw?'Description likho':[a,o,p].some(Number.isNaN)?'Amount galat hai':(K!=='note'&&K!=='task'&&a==null)?'Total amount likho':(o!=null&&a!=null&&o>a)?'Baaki total se zyada nahi ho sakta':'';
+ if(e){$('#f_err').textContent=e;return}busy=1;
+ const b=cur,r=Object.assign(b?{...b}:mk({raw,kind:K,cat:'',amt:null,out:null,method:null,shop:null,status:'ok'}),{raw,kind:K,cat:$('#f_cat').value.trim()||KL[K],amt:a,out:o,paid:p,method:$('#f_m').value||null,cust:$('#f_c').value.trim(),shop:$('#f_s').value.trim()||null,status:$('#f_st').value,due:$('#f_due').value||null,done:$('#f_done').checked});
+ try{await put(r,b?'edit':'add',b);$('#ed').close();toast('Saved ✓');render()}catch(x){$('#f_err').textContent='SAVE NAHI HUA: '+x.message}busy=0}
+async function fk(){if(!cur||!confirm('Ye entry delete karein?'))return;const x=cur;try{await del(x);$('#ed').close();render();toast('Delete ho gaya',async()=>{try{await put(x,'undo-delete');render()}catch(e){toast('Undo fail: '+e.message)}})}catch(e){toast('Delete fail: '+e.message)}}
+async function fd2(){if(!cur)return;const r={...cur,id:uid(),created:Date.now(),hist:false};try{await put(r,'duplicate');$('#ed').close();render();toast('Duplicate ban gaya')}catch(e){toast('Fail: '+e.message)}}
+async function repay(c){const v=prompt(c+' ne kitna diya? (e.g. 500 ya 500 upi)');if(!v)return;const n=v.match(/\d+(\.\d+)?/);if(!n)return toast('Amount samajh nahi aaya');
+ const a=Math.round(n[0]*100),ow=owed()[c]||0;if(a>ow&&!confirm('Baaki sirf '+R(ow)+' hai. Phir bhi save?'))return;
+ const r=mk({raw:c+' udhaar jama '+n[0],kind:'repay',cat:'Udhaar jama',amt:a,out:null,method:/upi/i.test(v)?'upi':'cash',shop:null,status:'ok'});r.cust=c;
+ try{await put(r,'add');render();toast('Jama ✓ (naya sale nahi bana)')}catch(e){toast('Fail: '+e.message)}}
+function repText(){const L=day(),m=sum(L),op=S.op[S.date],T=[...A.values()].filter(x=>x.kind==='task'&&!x.done&&(x.due||x.date)<=S.date);
+ const o=Object.values(owed()).reduce((a,b)=>a+Math.max(b,0),0),ln='------------------------------';
+ let t=`*${S.shop}*\nAaj ka Hisaab — ${fd(S.date)}\n${ln}\n`+(op!=null?`Opening cash: ${R(op)}\n`:'')+L.map((x,i)=>`${i+1}. ${x.raw}${x.amt!=null?' — '+R(x.amt):''}${x.out?' (udhaar '+R(x.out)+')':''}${x.status==='unverified'?' [UNVERIFIED]':''}${x.status==='cancelled'?' [CANCELLED]':''} (${KL[x.kind]})`).join('\n')+`\n${ln}\n`;
+ t+=`Confirmed sales: ${R(m.sales)}\nUnverified (total mein nahi): ${R(m.unv)}\nCash mila: ${R(m.cash)}\nUPI mila: ${R(m.upi)}\nOther/method?: ${R(m.oth)}\nPayment confirm nahi: ${R(m.unc)}\nUdhaar bana: ${R(m.cr)}\nUdhaar jama hua: ${R(m.rep)}\nKharcha: ${R(m.exp)}\nRefund: ${R(m.ref)}\n`;
+ t+=`Net cash movement = Mila (${R(m.rec)}, udhaar jama sahit) − Kharcha − Refund = ${R(m.net)}\n`;
+ t+=op!=null&&!m.unc?`Closing cash = Opening + Cash mila − Kharcha − Refund = ${R(op+m.cash-m.exp-m.ref)} (maana: kharcha/refund cash se)\n`:'Closing cash: nahi nikala (opening ya payment details adhoore)\n';
+ t+=`(Sales ≠ profit. Profit tab banta hai jab cost likhi ho.)\n${ln}\n`+(T.length?'Pending tasks:\n'+T.map(x=>'• '+x.raw).join('\n')+'\n':'')+`Total udhaar baaki (sab din): ${R(o)}\nEntries: ${L.length}\n${ln}\nGenerated by Shop Manager Pro`;return t}
+function csv(rows){const c=v=>'"'+String(v??'').replace(/"/g,'""')+'"';return'\ufeff'+['date,type,category,text,total,baaki,mila,method,shop,customer,status'].concat(rows.map(x=>[fd(x.date),x.kind,x.cat,x.raw,x.amt==null?'':x.amt/100,x.out==null?'':x.out/100,x.paid==null?'':x.paid/100,x.method,x.shop,x.cust,x.status].map(c).join(','))).join('\n')}
+function dl(n,t,ty){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:ty}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4e3)}
+async function imp(f){try{const j=JSON.parse(await f.text());if(j.app!=='smp'||!Array.isArray(j.tx))throw Error('Ye is app ka backup nahi hai');
+ const nw=j.tx.filter(x=>x&&x.id&&x.date&&!A.has(x.id));if(!confirm(`Backup: ${String(j.exported).slice(0,10)} • v${j.v}\nTotal ${j.tx.length} entries, naye ${nw.length}.\nMerge karein? (purana kuch delete/overwrite nahi hoga)`))return;
+ await bulk(nw);toast(nw.length+' entries add hui');render()}catch(e){toast('Import fail: '+e.message)}}
+const act={
+ prev:()=>go(sh(S.date,-1)),next:()=>go(sh(S.date,1)),qs,new:()=>openEd(null),more:()=>{lim+=50;srch()},
+ edit:b=>openEd(A.get(b.dataset.id)),fs,fx:()=>$('#ed').close(),fk,fd:fd2,repay:b=>repay(b.dataset.c),
+ rep:()=>{$('#op').value=S.op[S.date]==null?'':S.op[S.date]/100;$('#rt').value=repText();$('#rd').showModal()},rx:()=>$('#rd').close(),
+ rc:async()=>{try{await navigator.clipboard.writeText($('#rt').value)}catch{$('#rt').select();document.execCommand('copy')}toast('Copy ho gaya')},
+ rs:()=>navigator.share?navigator.share({text:$('#rt').value}).catch(()=>{}):toast('Share available nahi — Copy use karo'),
+ rp:()=>{$('#pr').textContent=$('#rt').value;print()},rv:()=>dl('hisaab-'+S.date+'.csv',csv(day()),'text/csv'),
+ bak:async()=>{dl('shop-backup-'+new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'})+'.json',JSON.stringify({app:'smp',v:1,exported:new Date().toISOString(),att:S.att||null,tx:[...A.values()]}),'application/json');S.lb=Date.now();await sv();render();health()},
+ csv:()=>dl('sab-entries.csv',csv([...A.values()].sort((a,b)=>a.date.localeCompare(b.date))),'text/csv'),imp:()=>$('#fi').click(),
+ rst:()=>{if(confirm('Saara data delete hoga! Pehle backup liya?')&&prompt('Type DELETE')==='DELETE'){db.close();indexedDB.deleteDatabase(/[?&]demo=1/.test(location.search)?'smp-demo':'smp').onsuccess=()=>{localStorage.clear();location.reload()}}}};
+async function go(d){S.date=d;await kvs('date',d);render()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+ if(a.startsWith('v:'))return setv(a.slice(2));
+ if(a.startsWith('fp:')){const a2=P($('#f_amt').value),o=P($('#f_out').value)||0;if(a2>0){$('#f_paid').value=(a2-o)/100;$('#f_m').value=a.slice(3)}return}
+ act[a]&&act[a](b)});
+$('#dp').onchange=e=>e.target.value&&go(e.target.value);
+$('#op').onchange=async e=>{const v=P(e.target.value);S.op[S.date]=Number.isNaN(v)?null:v;await sv();$('#rt').value=repText()};
+$('#s_n').onchange=e=>{S.shop=e.target.value.trim()||'Meri Dukaan';sv();render()};$('#s_t').onchange=e=>{S.theme=e.target.value;sv();th()};$('#s_a').onchange=e=>{S.assume=e.target.checked?1:0;sv();render()};
+$('#fi').onchange=e=>{e.target.files[0]&&imp(e.target.files[0]);e.target.value=''};
+let T;$('#sq').oninput=()=>{clearTimeout(T);T=setTimeout(()=>{lim=50;srch()},200)};['#sk','#ss','#sa','#sb'].forEach(s=>$(s).onchange=()=>{lim=50;srch()});
+$('#f_kind').innerHTML=Object.entries(KL).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('#sk').innerHTML+=$('#f_kind').innerHTML;
+const net=()=>{const o=navigator.onLine;$('#dot').classList.toggle('off',!o);$('#ol').textContent=o?'online':'offline'};addEventListener('online',net);addEventListener('offline',net);net();
+const SEED=[['Switch off / phone not on',200,null,'ok'],['Full phone setup + battery (total bill 1600, 200 udhaar)',1600,200,'ok'],['Battery sale',180,null,'ok'],['Charging pin',100,null,'ok'],['Battery + charging pin',250,null,'ok'],['Recharge 349 (uncertain, pending verification)',349,null,'unverified'],['Charging pin',120,null,'ok'],['Cover',130,null,'ok']];
+const NOTES=[['Hyderabad: BN5Q battery + one-piece glass + Oppo A6x cover','Shop 1'],['Pawan: battery return lena hai (kal, 28/10/2026); Tesla + BN54 battery','Shop 1','task'],['Mobile Bajar: 4 mobile sets','Shop 2'],['BL5C battery','Shop 1']];
+async function seed(){const b=Date.parse('2026-10-27T18:00:00+05:30'),r=[];
+ SEED.forEach((s,i)=>r.push({id:'seed27-'+(i+1),date:'2026-10-27',created:b+i,raw:s[0],kind:'sale',cat:'27/10 reference',amt:s[1]*100,out:s[2]==null?null:s[2]*100,paid:null,method:null,shop:null,status:s[3],cust:'',hist:true,due:null,done:false}));
+ NOTES.forEach((s,i)=>r.push({id:'seed27-n'+(i+1),date:'2026-10-27',created:b+20+i,raw:s[0],kind:s[2]||'note',cat:'Stock note',amt:null,out:null,paid:null,method:null,shop:s[1],status:'ok',cust:'',hist:true,due:s[2]?'2026-10-28':null,done:false}));
+ await bulk(r);await kvs('seed27',1)}
+(async()=>{try{db=await new Promise((ok,no)=>{const r=indexedDB.open(/[?&]demo=1/.test(location.search)?'smp-demo':'smp',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('tx',{keyPath:'id'}).createIndex('date','date');d.createObjectStore('kv',{keyPath:'k'});d.createObjectStore('log',{keyPath:'id'})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+ await new Promise(r=>{const q=db.transaction('tx').objectStore('tx').getAll();q.onsuccess=()=>{q.result.forEach(x=>A.set(x.id,x));r()}});
+ Object.assign(S,await kvg('s')||{});S.date=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});if(/[?&]demo=1/.test(location.search)&&!await kvg('seed27'))await seed();
+ q.value=localStorage.d||'';q.oninput();render();q.focus();navigator.storage&&navigator.storage.persist&&navigator.storage.persist();
+ if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})}
+ catch(e){document.body.innerHTML='<p style="padding:20px">IndexedDB chal nahi raha: '+esc(e.message)+'<br>Private mode band karke dobara kholo.</p>'}})();
+</script><script>
+(()=>{const W=window;
+document.head.insertAdjacentHTML('beforeend','<style>.ch{display:flex;gap:6px;overflow-x:auto;padding:2px 0 6px}.ch button{white-space:nowrap;min-height:36px;padding:4px 12px;border-radius:99px;font-weight:500}#q{border:2px solid var(--ac);border-radius:14px;font-size:19px}.qr .p{flex:2;font-size:17px}.r{border-left:4px solid var(--bd)}.k-sale{border-left-color:var(--ac)}.k-expense,.k-refund{border-left-color:#d33}.k-repay{border-left-color:#2a7de1}.k-task{border-left-color:var(--wa)}.pb{display:flex;gap:6px;margin-top:6px}.pb button{min-height:34px;padding:2px 12px;font-size:13px}.c{border-radius:12px}.c b{font-size:18px}[data-a=fk]{color:#d33}#lk{position:fixed;inset:0;z-index:99;background:var(--bg);display:grid;place-items:center}</style>');
+document.body.insertAdjacentHTML('beforeend','<dialog id="cf"><div class="fm"><div id="cm" style="white-space:pre-wrap"></div><input id="ci" class="hid"><textarea id="ct" rows="8" class="hid"></textarea><div class="f2"><button class="p" id="cy">OK</button><button id="cn">Cancel</button></div></div></dialog><div id="lk" class="hid"><div class="fm" style="width:min(280px,90vw)"><h2>🔒 PIN daalo</h2><input id="lp" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN"><button class="p" id="lb">Kholo</button><small id="le" style="color:#d33"></small></div></div>');
+W.ask=(m,o={})=>new Promise(r=>{const d=$('#cf'),i=$('#ci'),t=$('#ct');$('#cm').textContent=m;i.classList.toggle('hid',!o.inp);t.classList.toggle('hid',!o.area);i.type=o.pw?'password':'text';i.inputMode=o.num?'numeric':'text';i.value=o.val||'';t.value='';$('#cy').textContent=o.ok||'OK';
+ const f=v=>{d.close();r(v)};$('#cy').onclick=()=>f(o.area?t.value:o.inp?i.value:true);$('#cn').onclick=()=>f(null);i.onkeydown=e=>e.key==='Enter'&&$('#cy').click();d.oncancel=()=>r(null);d.showModal();(o.area?t:i).focus()});
+// delete / repay / import / reset with in-app dialogs
+W.fk=async()=>{if(!cur||!await ask('Ye entry delete karein?\n'+cur.raw,{ok:'Delete'}))return;const x=cur;try{await del(x);$('#ed').close();render();toast('Delete ho gaya',async()=>{try{await put(x,'undo-delete');render()}catch(e){toast('Undo fail: '+e.message)}})}catch(e){toast('Delete fail: '+e.message)}};
+W.repay=async c=>{const v=await ask(c+' ne kitna diya?\n(e.g. 500 ya 500 upi)',{inp:1,ok:'Jama'});if(!v)return;const n=v.match(/\d+(\.\d+)?/);if(!n)return toast('Amount samajh nahi aaya');const a=Math.round(n[0]*100),ow=owed()[c]||0;if(a>ow&&!await ask('Baaki sirf '+R(ow)+' hai. Phir bhi save?'))return;
+ const r=mk({raw:c+' udhaar jama '+n[0],kind:'repay',cat:'Udhaar jama',amt:a,out:null,method:/upi/i.test(v)?'upi':'cash',shop:null,status:'ok'});r.cust=c;try{await put(r,'add');render();toast('Jama ✓ (naya sale nahi bana)')}catch(e){toast('Fail: '+e.message)}};
+W.imp=async f=>{try{const j=JSON.parse(await f.text());if(j.app!=='smp'||!Array.isArray(j.tx))throw Error('Ye is app ka backup nahi hai');const nw=j.tx.filter(x=>x&&x.id&&x.date&&!A.has(x.id));
+ if(!await ask(`Backup: ${String(j.exported).slice(0,10)} • v${j.v}\nTotal ${j.tx.length} entries, naye ${nw.length}.\nMerge karein? (purana kuch delete nahi hoga)`,{ok:'Merge'}))return;await bulk(nw);toast(nw.length+' entries add hui');render()}catch(e){toast('Import fail: '+e.message)}};
+// Hindi -> parser words
+const HM=[['बैटरी','battery'],['चार्जिंग','charging'],['पिन','pin'],['कवर','cover'],['ग्लास','glass'],['रिचार्ज','recharge'],['उधार','udhaar'],['बाकी','baki'],['खर्चा','kharcha'],['खर्च','kharch'],['यूपीआई','upi'],['कैश','cash'],['रुपये',''],['रुपए',''],['रिफंड','refund'],['बेचा','sell']];
+const hin=t=>HM.reduce((s,[a,b])=>s.split(a).join(b),t).replace(/[०-९]/g,d=>'०१२३४५६७८९'.indexOf(d));
+const _p=W.parse;W.parse=raw=>{raw=hin(raw);const c=raw.match(/(?:cost|lagat|kharid)\s*(\d+)/i),r=_p(c?raw.replace(c[0],' '):raw);if(c&&r.amt!=null)r.cost=+c[1]*100;return r};
+W.qs=async()=>{const v=q.value.trim();if(!v||busy)return;busy=1;try{const p=parse(v);p.raw=v;const r=mk(p);r.cost=p.cost||null;if(MD==='in'){r.kind='stockin';r.cat='Saman aaya';r.sup=supOf(v)||null;r.out=null;r.status='ok';r.cost=null}await put(r,'add');q.value='';localStorage.d='';$('#pv').textContent='Saved ✓';render()}catch(e){toast('SAVE NAHI HUA: '+e.message)}busy=0;q.focus()};
+// edit dialog: cost + phone
+$('#f_paid').closest('.f2').insertAdjacentHTML('afterend','<div class="f2"><label>Cost ₹ (profit ke liye)<input id="f_cost" inputmode="decimal"></label><label>Customer phone<input id="f_ph" inputmode="tel"></label></div>');
+const _o=W.openEd;W.openEd=x=>{_o(x);$('#f_cost').value=x&&x.cost!=null?x.cost/100:'';$('#f_ph').value=x&&x.cust&&(S.ph||{})[x.cust]||'';$('#f_sup').value=x&&x.sup||''};
+W.fs=async()=>{if(busy)return;const K=$('#f_kind').value,a=P($('#f_amt').value),o=P($('#f_out').value),p=P($('#f_paid').value),c=P($('#f_cost').value),raw=$('#f_raw').value.trim();
+ const e=!raw?'Description likho':[a,o,p,c].some(Number.isNaN)?'Amount galat hai':(K!=='note'&&K!=='task'&&K!=='stockin'&&a==null)?'Total amount likho':(o!=null&&a!=null&&o>a)?'Baaki total se zyada nahi ho sakta':'';if(e){$('#f_err').textContent=e;return}busy=1;
+ const b=cur,r=Object.assign(b?{...b}:mk({raw,kind:K,cat:'',amt:null,out:null,method:null,shop:null,status:'ok'}),{raw,kind:K,cat:$('#f_cat').value.trim()||KL[K],amt:a,out:o,paid:p,cost:c,sup:$('#f_sup').value.trim()||null,method:$('#f_m').value||null,cust:$('#f_c').value.trim(),shop:$('#f_s').value.trim()||null,status:$('#f_st').value,due:$('#f_due').value||null,done:$('#f_done').checked});
+ try{await put(r,b?'edit':'add',b);const ph=$('#f_ph').value.trim();if(r.cust&&ph){(S.ph=S.ph||{})[r.cust]=ph;sv()}$('#ed').close();toast('Saved ✓');render()}catch(x){$('#f_err').textContent='SAVE NAHI HUA: '+x.message}busy=0};
+// rows: colour strip + one-tap payment confirm
+const _row=W.row;W.row=(x,d)=>{let h=_row(x,d).replace('class="r ','class="r k-'+x.kind+' ');
+ if(x.kind==='sale'&&x.status==='ok'&&x.paid==null&&!(S.assume&&x.out==null)&&x.amt-(x.out||0)>0)h=h.replace(/<\/div>$/,`<div class="pb"><button data-a="pay" data-m="cash" data-id="${x.id}">✓ Cash mila</button><button data-a="pay" data-m="upi" data-id="${x.id}">✓ UPI mila</button></div></div>`);return h};
+// quick chips + voice + today
+$('#q').insertAdjacentHTML('beforebegin','<div id="ch" class="ch"></div>');$('.qr').insertAdjacentHTML('beforeend','<button data-a="mic" aria-label="Bolkar likho">🎤</button>');$('.dn').insertAdjacentHTML('beforeend','<button data-a="today">Aaj</button>');
+const chips=()=>{const m={};for(const x of A.values()){if(x.kind!=='sale'||x.amt==null)continue;const k=x.raw.replace(/[\d₹,.]+/g,'').replace(/\s+/g,' ').trim().toLowerCase();if(!k||k.length>28)continue;const e=m[k]||(m[k]={n:0,t:0,raw:''});e.n++;if(x.created>e.t){e.t=x.created;e.raw=x.raw}}
+ $('#ch').innerHTML=Object.values(m).sort((a,b)=>b.n-a.n||b.t-a.t).slice(0,8).map(e=>`<button data-a="chip" data-t="${esc(e.raw)}">${esc(e.raw)}</button>`).join('')};
+const SR=W.SpeechRecognition||W.webkitSpeechRecognition;
+// search summary + week/month
+$('#sr').insertAdjacentHTML('beforebegin','<div class="f2" style="margin:6px 0"><button data-a="wk">Is hafte</button><button data-a="mo">Is mahine</button></div>');
+W.srch=()=>{const q=$('#sq').value.toLowerCase(),k=$('#sk').value,s=$('#ss').value,a=$('#sa').value,b=$('#sb').value;
+ const r=[...A.values()].filter(x=>(!q||(x.raw+' '+x.cust+' '+x.cat).toLowerCase().includes(q))&&(!k||x.kind===k)&&(!s||x.shop===s)&&(!a||x.date>=a)&&(!b||x.date<=b)).sort((x,y)=>y.date.localeCompare(x.date)||y.created-x.created),m=sum(r);
+ $('#sr').innerHTML=`<div class="r"><small>${r.length} entries${a||b?' • '+(a?fd(a):'…')+' se '+(b?fd(b):'…'):''}</small><br>Sales <b>${R(m.sales)}</b> • Mila ${R(m.rec)} • Kharcha ${R(m.exp)} • Udhaar bana ${R(m.cr)}</div>`+(r.slice(0,lim).map(x=>row(x,1)).join('')+(r.length>lim?'<button data-a="more">Aur dikhao ('+(r.length-lim)+')</button>':''))};
+// report: profit + cash match
+$('#op').closest('label').insertAdjacentHTML('afterend','<label>Drawer mein abhi actual cash ₹ (cash match)<input id="dr" inputmode="decimal"></label>');
+$('#dr').onchange=async e=>{const v=P(e.target.value);(S.dr=S.dr||{})[S.date]=Number.isNaN(v)?null:v;await sv();$('#rt').value=repText()};
+const _rt=W.repText;W.repText=()=>{const t=_rt(),L=day(),m=sum(L),op=S.op[S.date],dr=(S.dr||{})[S.date];let x='',pr=0,wc=0;
+ for(const e of L)if(e.kind==='sale'&&e.status==='ok'&&e.cost!=null){pr+=e.amt-e.cost;wc++}
+ if(wc)x+=`Profit (sirf cost wali ${wc} entries): ${R(pr)}\n`;
+ if(dr!=null){if(op!=null&&!m.unc){const ex=op+m.cash-m.exp-m.ref;x+=`Drawer actual: ${R(dr)} | Hona chahiye: ${R(ex)} | Farak: ${R(dr-ex)}\n`}else x+=`Drawer actual: ${R(dr)} (match nahi nikala — opening/payment adhoora)\n`}
+ return x?t.replace('\nTotal udhaar baaki','\n'+x.trimEnd()+'\nTotal udhaar baaki'):t};
+// settings buttons
+$('#hl').insertAdjacentHTML('beforebegin','<button data-a="pin">🔒 PIN lock</button><button data-a="npi">📋 Purane Notepad notes import</button>');
+const _r=W.render;W.render=()=>{_r();const L=day();let pr=0,wc=0;for(const e of L)if(e.kind==='sale'&&e.status==='ok'&&e.cost!=null){pr+=e.amt-e.cost;wc++}
+ if(wc)$('#dash').insertAdjacentHTML('beforeend',`<div class="c g1"><small>Profit (${wc} cost wali entries)</small><b>${R(pr)}</b></div>`);
+ $('#kh').innerHTML=Object.entries(owed()).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="r k-task"><b>${esc(k)}</b> — baaki ${R(v)}<div class="pb"><button data-a="repay" data-c="${esc(k)}">Jama</button><button data-a="wa" data-c="${esc(k)}">WhatsApp</button></div></div>`).join('')||'<p class="mu">Koi udhaar baaki nahi.</p>';chips();sect();if(!W._mg){W._mg=1;mig().then(()=>render()).catch(()=>{})}};
+// ---- Saman aaya (dusri dukan se) vs Bikri (meri dukan) ----
+KL.stockin='Saman aaya';['#f_kind','#sk'].forEach(s=>$(s).insertAdjacentHTML('beforeend','<option value="stockin">Saman aaya</option>'));
+$('#f_c').closest('.f2').insertAdjacentHTML('afterend','<label>Kahan se aaya (supplier / dukan)<input id="f_sup" list="spl"></label><datalist id="spl"></datalist>');
+let MD='sale';
+$('#ch').insertAdjacentHTML('beforebegin','<div class="f2" id="sg" style="margin-bottom:6px"><button data-a="md:sale" class="p">🛒 Bikri</button><button data-a="md:in">📦 Saman aaya</button></div>');
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a^="md:"]');if(!b)return;MD=b.dataset.a.slice(3);document.querySelectorAll('#sg button').forEach(x=>x.classList.toggle('p',x===b));q.placeholder=MD==='in'?'Hyderabad: BN5Q battery + glass shop 1':'Likho: Battery sell 180';q.oninput();q.focus()});
+const supOf=v=>{const m=v.match(/^([^:\-–]{2,30}?)\s*[:\-–]\s*\S/)||v.match(/^(.{2,30}?)\s+se\s+\S/i);return m?m[1].trim():''};
+const _oi=q.oninput;q.oninput=()=>{_oi();const v=q.value.trim();if(MD==='in'&&v){const p=parse(v),s=supOf(v);$('#pv').textContent='Saman aaya'+(s?' • '+s:' • supplier likho — "Naam: saman"')+(p.shop?' • '+p.shop:'')+(p.amt!=null?' • kharid '+R(p.amt):'')}};
+function sect(){const L=day(),si=L.filter(x=>x.kind==='stockin'),bk=L.filter(x=>x.kind!=='stockin');
+ const T=[...A.values()].filter(x=>(x.kind==='task'||(x.kind==='stockin'&&x.due))&&!x.done&&x.status!=='cancelled'&&(x.due||x.date)<=S.date);
+ $('#tk').innerHTML=T.length?'<h2>Pending / lene hain ('+T.length+')</h2>'+T.map(x=>row(x,1)).join(''):'';
+ const e=$('#ls').previousElementSibling;if(e)e.classList.add('hid');
+ $('#ls').innerHTML='<h2>🛒 Meri dukan pe bikri ('+bk.length+')</h2>'+(bk.map(x=>row(x)).join('')||'<p class="mu">Abhi koi bikri nahi. Upar likho: "Battery sell 180" aur Enter dabao.</p>')+'<h2>📦 Saman aaya — dusri dukan se ('+si.length+')</h2>'+(si.map(x=>row(x)).join('')||'<p class="mu">"📦 Saman aaya" dabao aur likho: "Hyderabad: BN5Q battery shop 1".</p>');
+ const k=si.reduce((a,x)=>a+(x.amt||0),0);if(si.length)$('#dash').insertAdjacentHTML('beforeend',`<div class="c"><small>Saman aaya (sale nahi)</small><b>${si.length} entries${k?' • '+R(k):''}</b></div>`);
+ $('#spl').innerHTML=[...new Set([...A.values()].map(x=>x.sup).filter(Boolean))].map(s=>`<option value="${esc(s)}">`).join('')}
+const _rt2=W.repText;W.repText=()=>{const t=_rt2(),ln='------------------------------',p=t.split('\n'+ln+'\n'),L=day(),op=S.op[S.date];if(p.length<3)return t;
+ const bk=L.filter(x=>x.kind!=='stockin'),si=L.filter(x=>x.kind==='stockin');
+ const it=(op!=null?'Opening cash: '+R(op)+'\n':'')+'BIKRI (meri dukan)\n'+(bk.map((x,i)=>`${i+1}. ${x.raw}${x.amt!=null?' — '+R(x.amt):''}${x.out?' (udhaar '+R(x.out)+')':''}${x.status==='unverified'?' [UNVERIFIED]':''}${x.status==='cancelled'?' [CANCELLED]':''} (${KL[x.kind]})`).join('\n')||'—')+'\n\nSAMAN AAYA (dusri dukan se — sale nahi)\n'+(si.map((x,i)=>`${i+1}. ${x.raw}${x.shop?' ['+x.shop+']':''}${x.amt!=null?' — kharid '+R(x.amt):''}`).join('\n')||'—');
+ return [p[0],it,...p.slice(2)].join('\n'+ln+'\n')};
+async function mig(){if(await kvg('mig2'))return;const M={'seed27-n1':{sup:'Hyderabad',raw:'Hyderabad: BN5Q battery + one-piece glass + Oppo A6x cover',shop:'Shop 1'},'seed27-n2':{sup:'Pawan',raw:'Pawan: battery return kal lena hai — Tesla + BN54 battery',shop:'Shop 1',due:'2026-10-28'},'seed27-n3':{sup:'Mobile Bajar',raw:'Mobile Bajar: 4 mobile sets',shop:'Shop 2'},'seed27-n4':{sup:'Mobile Bajar',raw:'Mobile Bajar: BL5C battery',shop:'Shop 1'}};
+ const u=Object.entries(M).filter(([id])=>A.has(id)).map(([id,m])=>({...A.get(id),...m,kind:'stockin',cat:'Saman aaya',done:false}));if(u.length)await bulk(u);await kvs('mig2',1)}
+// PIN lock (basic privacy lock, not encryption)
+const H=s=>{let h=5381;for(const c of s+'smp')h=(h*33^c.charCodeAt(0))>>>0;return h.toString(36)};
+const lock=()=>{if(localStorage.pinh){$('#lk').classList.remove('hid');$('#lp').value='';$('#lp').focus()}};
+const tryU=()=>{if(H($('#lp').value)===localStorage.pinh){$('#lk').classList.add('hid');$('#le').textContent=''}else{$('#le').textContent='Galat PIN';$('#lp').value=''}};
+$('#lb').onclick=tryU;$('#lp').onkeydown=e=>e.key==='Enter'&&tryU();lock();let hd=0;document.addEventListener('visibilitychange',()=>{if(document.hidden)hd=Date.now();else if(hd&&Date.now()-hd>6e4)lock()});
+Object.assign(act,{fs:W.fs,fk:W.fk,qs:W.qs,
+ rst:async()=>{if(await ask('Saara data delete hoga! Pehle backup liya?\nConfirm ke liye DELETE likho:',{inp:1,ok:'Reset'})==='DELETE'){db.close();indexedDB.deleteDatabase(/[?&]demo=1/.test(location.search)?'smp-demo':'smp').onsuccess=()=>{localStorage.clear();location.reload()}}},
+ pay:async b=>{const x=A.get(b.dataset.id);if(!x)return;try{await put({...x,paid:x.amt-(x.out||0),method:b.dataset.m},'edit',x);render();toast('Payment confirm ✓')}catch(e){toast('Fail: '+e.message)}},
+ chip:b=>{q.value=b.dataset.t;q.oninput();q.focus();const m=q.value.match(/\d+(?!.*\d)/);m&&q.setSelectionRange(m.index,m.index+m[0].length)},
+ mic:b=>{if(!SR)return toast('Is browser mein voice nahi hai');const r=new SR();r.lang='hi-IN';r.onresult=e=>{q.value=(q.value+' '+hin(e.results[0][0].transcript)).trim();q.oninput();q.focus()};r.onerror=e=>toast('Voice error: '+e.error+' (internet chahiye)');r.onend=()=>b.textContent='🎤';b.textContent='🔴';r.start()},
+ today:()=>go(new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'})),
+ wk:()=>{const w=(new Date(S.date+'T12:00:00').getDay()+6)%7;$('#sa').value=sh(S.date,-w);$('#sb').value=S.date;srch()},
+ mo:()=>{$('#sa').value=S.date.slice(0,8)+'01';$('#sb').value=S.date;srch()},
+ wa:async b=>{const c=b.dataset.c,ow=owed()[c]||0;S.ph=S.ph||{};let p=S.ph[c];if(!p){p=await ask(c+' ka WhatsApp number (10 digit):',{inp:1,num:1,ok:'Save'});if(!p)return;p=p.replace(/\D/g,'').slice(-10);if(p.length!==10)return toast('Number galat hai');S.ph[c]=p;sv()}
+  open('https://wa.me/91'+p+'?text='+encodeURIComponent(`Namaste ${c.startsWith('Walk-in')?'':c+' ji, '}${S.shop} se. Aapka ₹${(ow/100).toLocaleString('en-IN')} udhaar baaki hai. Kripya jama kar dein. Dhanyavaad 🙏`),'_blank')},
+ pin:async()=>{const p=await ask(localStorage.pinh?'Naya PIN (khali chhodo = PIN hata do):':'4+ digit PIN set karo:',{inp:1,pw:1,num:1,ok:'Set'});if(p===null)return;if(p===''){localStorage.removeItem('pinh');return toast('PIN hata diya')}if(p.length<4)return toast('Kam se kam 4 digit');localStorage.pinh=H(p);toast('PIN set ✓ (basic lock hai, encryption nahi)')},
+ npi:async()=>{const t=await ask('Notepad ke notes paste karo (har line = 1 entry, '+fd(S.date)+' ki date par):',{area:1,ok:'Preview'});if(!t)return;const ls=t.split('\n').map(s=>s.trim()).filter(Boolean);if(!ls.length)return;
+  const rs=ls.map((l,i)=>{const p=parse(l);p.raw=l;const r=mk(p);r.created+=i;r.cost=p.cost||null;return r}),ok=rs.filter(r=>r.amt!=null).length;
+  if(!await ask(`${ls.length} lines mili.\n${ok} amount ke saath pehchani, ${ls.length-ok} note ke roop mein.\n${fd(S.date)} par add karein?`,{ok:'Add'}))return;try{await bulk(rs);render();toast(rs.length+' entries add hui')}catch(e){toast('Import fail: '+e.message)}}});
+const _rep=act.rep;act.rep=()=>{_rep();const d=(S.dr||{})[S.date];$('#dr').value=d==null?'':d/100};
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),TD=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'}),z=n=>String(n).padStart(2,'0');
+const LK=()=>S.lock||(S.lock={}),lk=d=>!!LK()[d],deny=()=>toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.');
+KL.suppay='Supplier ko diya';Q('#f_kind').insertAdjacentHTML('beforeend','<option value="suppay">Supplier ko diya</option>');
+document.head.insertAdjacentHTML('beforeend','<style>nav button{font-size:11px;padding:0}.rs{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:6px;animation:pop .4s ease both}.g .c{animation:pop .3s ease both}@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes gr{from{transform:scaleY(0)}to{transform:scaleY(1)}}@keyframes gx{from{transform:scaleX(0)}to{transform:scaleX(1)}}.bar{transform-box:fill-box;transform-origin:bottom;animation:gr .6s cubic-bezier(.2,.8,.2,1) both}.hb{height:8px;border-radius:6px;background:var(--ac);transform-origin:left;animation:gx .7s ease both;margin-top:4px}.lkb{background:var(--wa);color:#fff;border-radius:10px;padding:8px 10px;margin:6px 0}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}</style>');
+Q('nav [data-a="v:khata"]').insertAdjacentHTML('afterend','<button data-a="v:stock">Stock</button><button data-a="v:chart">Graph</button>');
+Q('main').insertAdjacentHTML('beforeend','<section id="v-stock" class="hid"></section><section id="v-chart" class="hid"></section>');
+Q('#tk').insertAdjacentHTML('beforebegin','<div id="dq"></div><div id="lw"></div>');Q('#dl').insertAdjacentHTML('beforebegin','<div id="lkb"></div>');
+Q('#kh').insertAdjacentHTML('afterend','<h2>Supplier khata</h2><div id="sk2"></div>');
+Q('#f_due').closest('label').childNodes[0].textContent='Due date (udhaar / task)';
+Q('#f_cost').closest('.f2').insertAdjacentHTML('afterend','<div class="f2"><label>Warranty (din)<input id="f_war" inputmode="numeric"></label><button data-a="bill">🧾 Bill banao</button></div>');
+Q('[data-a=rv]').insertAdjacentHTML('afterend','<button data-a="rw">WhatsApp</button>');
+Q('[data-a=imp]').insertAdjacentHTML('beforebegin','<button data-a="bsh">📤 Backup bhejo (WhatsApp / Drive)</button>');
+Q('#q').setAttribute('list','qd');document.body.insertAdjacentHTML('beforeend','<datalist id="qd"></datalist>');
+let CN=7;const RV={r:0,s:0};
+const inMode=()=>Q('#sg button[data-a="md:in"]').classList.contains('p');
+const supOf=v=>{const m=v.match(/^([^:\-–]{2,30}?)\s*[:\-–]\s*\S/)||v.match(/^(.{2,30}?)\s+se\s+\S/i);return m?m[1].trim():''};
+// parser add-ons: @naam, due 5/11, 30 din warranty, 3 sim, diya 200
+const _p=W.parse;W.parse=raw=>{let s=raw,m;const x={};
+ if(m=s.match(/@(\S+)/)){x.cust=m[1];s=s.replace(m[0],' ')}
+ if((m=s.match(/(?:due|tak|wapas)\s*(\d{1,2})[\/-](\d{1,2})(?:[\/-](\d{2,4}))?/i))&&+m[2]<=12&&+m[1]<=31){const y=m[3]?(+m[3]<100?2000+ +m[3]:+m[3]):+S.date.slice(0,4);let d=y+'-'+z(m[2])+'-'+z(m[1]);if(!m[3]&&d<S.date)d=(y+1)+d.slice(4);x.due=d;s=s.replace(m[0],' ')}
+ if(m=s.match(/(\d+)\s*(din|days?|mahin[ae]|months?|saal|years?)?\s*warranty|warranty\s*(\d+)\s*(din|days?|mahin[ae]|months?|saal|years?)?/i)){const n=+(m[1]||m[3]),u=(m[2]||m[4]||'din').toLowerCase();x.war=/mahin|month/.test(u)?n*30:/saal|year/.test(u)?n*365:n;s=s.replace(m[0],' ')}
+ if(m=s.match(/(\d+)\s*sims?\b/i)){x.sim=+m[1];s=s.replace(m[0],' ')}else if(/\bsims?\b/i.test(s))x.sim=1;
+ if(m=s.match(/(?:diya|paid|de diya)\s*(\d+)/i)){x.spaid=+m[1]*100;s=s.replace(m[0],' ')}
+ const r=_p(s);Object.assign(r,x);if(x.sim)r.cat='SIM';return r};
+const _oi=q.oninput;q.oninput=()=>{_oi();const v=q.value.trim();if(!v)return;const p=parse(v),b=(p.cust?' • @'+p.cust:'')+(p.war?' • 🛡 '+p.war+' din':'')+(p.due?' • due '+fd(p.due):'')+(p.sim?' • SIM ×'+p.sim:'')+(p.spaid!=null?' • diya '+R(p.spaid):'');if(b)Q('#pv').textContent+=b};
+W.qs=async()=>{const v=q.value.trim();if(!v||busy)return;if(lk(S.date))return deny();busy=1;try{const p=parse(v);p.raw=v;const r=mk(p);Object.assign(r,{cost:p.cost||null,due:p.due||null,war:p.war||null,sim:p.sim||null,cust:p.cust||''});
+ if(inMode())Object.assign(r,{kind:'stockin',cat:'Saman aaya',sup:supOf(v)||null,out:null,status:'ok',cost:null,war:null,sim:null,due:null,paid:p.spaid==null?null:p.spaid});
+ await put(r,'add');q.value='';localStorage.d='';Q('#pv').textContent='Saved ✓';render()}catch(e){toast('SAVE NAHI HUA: '+e.message)}busy=0;q.focus()};
+// rows: warranty + due badge
+const _row=W.row;W.row=(x,d)=>{let h=_row(x,d),b='';
+ if(x.war){const e=sh(x.date,x.war),l=Math.round((new Date(e+'T12:00:00')-new Date(TD()+'T12:00:00'))/864e5);b=l>=0?`🛡 warranty ${l} din baaki (${fd(e)} tak)`:`⛔ warranty khatam (${fd(e)})`}
+ if(x.due&&x.kind==='sale'&&x.out)b+=(b?' • ':'')+'⏰ due '+fd(x.due);
+ return b?h.replace(/(class="bd">[^]*?)<\/div>/,(m,a)=>a+' • <i>'+b+'</i></div>'):h};
+// edit dialog: warranty + lock guards
+const _o=W.openEd;W.openEd=x=>{_o(x);Q('#f_war').value=x&&x.war||''};
+const _fs=W.fs;W.fs=async()=>{if(lk(cur?cur.date:S.date))return deny();const ids=new Set(A.keys()),id=cur&&cur.id,w=parseInt(Q('#f_war').value)||null;await _fs();if(Q('#ed').open)return;
+ const r=id?A.get(id):[...A.values()].find(x=>!ids.has(x.id));if(r&&(r.war||null)!==w){try{await put({...r,war:w},'edit',r)}catch(e){}render()}};
+const _fk=W.fk;W.fk=()=>cur&&lk(cur.date)?deny():_fk();
+const _rp=W.repay;W.repay=c=>lk(S.date)?deny():_rp(c);
+const _pay=act.pay,_fd=act.fd,_np=act.npi,_rep=act.rep;
+// supplier khata, stock, due list
+function supL(){const o={};for(const x of A.values()){if(x.status==='cancelled'||!x.sup)continue;const e=o[x.sup]||(o[x.sup]={k:0,d:0});if(x.kind==='stockin'){e.k+=x.amt||0;e.d+=x.paid||0}else if(x.kind==='suppay')e.d+=x.amt||0}return o}
+const parts=raw=>(raw.includes(':')?raw.replace(/^[^:]*:/,''):raw).replace(/shop\s*[12]/ig,' ').split(/\s*(?:\+|,|\band\b|\baur\b)\s*/i).map(p=>{const m=p.trim().match(/^(.*?)\s*(?:x\s*(\d+)|(\d+)\s*(?:pcs?|piece|nos))(?!\w)/i);return m&&m[1].trim()?[m[1].trim().toLowerCase(),+(m[2]||m[3])]:null}).filter(Boolean);
+function stk(){const m={},g=n=>m[n]||(m[n]={n,a:0,s:0,b:0,m:2});for(const n in S.stk||{})g(n);const L=[...A.values()].filter(x=>x.status!=='cancelled');
+ for(const x of L)if(x.kind==='stockin')for(const[n,q2]of parts(x.raw))g(n).a+=q2;
+ const names=Object.keys(m).sort((a,b)=>b.length-a.length);
+ for(const x of L)if(x.kind==='sale'&&x.status==='ok'){let t=' '+x.raw.toLowerCase()+' ';for(const n of names){const re=new RegExp(n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:\\s*x\\s*(\\d+))?'),k=t.match(re);if(k){m[n].s+=+k[1]||1;t=t.replace(re,' ')}}}
+ for(const n in m){const o=(S.stk||{})[n];if(o){m[n].b=o.b||0;m[n].m=o.m==null?2:o.m}m[n].q=m[n].a-m[n].s+m[n].b}return m}
+function stkView(){const m=Object.values(stk()).sort((a,b)=>(a.q<=a.m?0:1)-(b.q<=b.m?0:1)||a.n.localeCompare(b.n));
+ Q('#v-stock').innerHTML='<h2>Stock</h2><p class="mu"><small>"📦 Saman aaya" mein "battery x5" likho to stock badhta hai. Bikri mein item ka naam aaye to −1 (ya "battery x2").</small></p><button data-a="si">+ Item / opening stock</button>'+(m.map(i=>`<div class="r ${i.q<=i.m?'unverified':'k-sale'}"><b>${esc(i.n)}</b> — <b>${i.q}</b> bacha ${i.q<=i.m?'<i>⚠ KAM STOCK</i>':''}<div class="bd">aaya ${i.a} − bika ${i.s} + adjust ${i.b} • alert ≤ ${i.m}</div><div class="pb"><button data-a="sa" data-n="${esc(i.n)}" data-d="1">+1</button><button data-a="sa" data-n="${esc(i.n)}" data-d="-1">−1</button><button data-a="sm" data-n="${esc(i.n)}">Alert</button></div></div>`).join('')||'<p class="mu">Abhi koi item nahi.</p>')}
+function dq(){const t=TD(),o=owed(),c={};for(const x of A.values())if(x.kind==='sale'&&x.out&&x.due&&x.status==='ok'){const k=x.cust||'Walk-in '+x.id.slice(-4);if(o[k]>0&&(!c[k]||x.due<c[k]))c[k]=x.due}
+ const L=Object.entries(c).filter(e=>e[1]<=t).sort((a,b)=>a[1].localeCompare(b[1]));
+ Q('#dq').innerHTML=L.length?'<h2>💰 Aaj kis se paisa lena hai ('+L.length+')</h2>'+L.map(([k,d])=>{const late=Math.round((new Date(t)-new Date(d))/864e5);return `<div class="r k-expense"><b>${esc(k)}</b> — ${R(o[k])} <i style="color:var(--wa)">${late>0?late+' din late':'aaj due'}</i> <small>(due ${fd(d)})</small><div class="pb"><button data-a="repay" data-c="${esc(k)}">Jama</button><button data-a="wa" data-c="${esc(k)}">WhatsApp</button></div></div>`}).join(''):''}
+function rsd(){let rv=0,rn=0,ru=0,sn=0,sa=0;for(const x of day()){if(x.status==='cancelled'||x.kind!=='sale')continue;const rc=x.cat==='Recharge'||/recharge/i.test(x.raw),sm=x.sim||(/\bsims?\b/i.test(x.raw)?1:0);if(rc){if(x.status==='unverified')ru+=x.amt;else{rv+=x.amt;rn++}}if(sm&&x.status==='ok'){sn+=sm;sa+=x.amt}}return{rv,rn,ru,sn,sa}}
+function cnt(el,to,f,from){if(matchMedia('(prefers-reduced-motion:reduce)').matches||from===to){el.textContent=f(to);return}const t0=performance.now(),st=t=>{const k=Math.min(1,(t-t0)/650),e=1-Math.pow(1-k,3);el.textContent=f(Math.round(from+(to-from)*e));if(k<1)requestAnimationFrame(st)};requestAnimationFrame(st)}
+function chart(){const by={};for(const x of A.values())(by[x.date]=by[x.date]||[]).push(x);const days=[];for(let i=CN-1;i>=0;i--){const d=sh(S.date,-i);days.push({d,v:sum(by[d]||[]).sales})}
+ const mx=Math.max(1,...days.map(x=>x.v)),WW=320,H=130,bw=WW/days.length;
+ const bars=days.map((x,i)=>{const h=Math.round(x.v/mx*(H-26));return `<rect class="bar" style="animation-delay:${i*20}ms" x="${i*bw+bw*.15}" y="${H-12-h}" width="${bw*.7}" height="${h}" rx="3" fill="${x.v===mx&&x.v>0?'var(--ac)':'var(--mu)'}" opacity="${x.v===mx?1:.55}"/>`+(CN<=7||i%5===0?`<text x="${i*bw+bw/2}" y="${H}" font-size="8" text-anchor="middle" fill="var(--mu)">${x.d.slice(8)}/${x.d.slice(5,7)}</text>`:'')+(CN<=7&&x.v?`<text x="${i*bw+bw/2}" y="${H-15-h}" font-size="8" text-anchor="middle" fill="var(--tx)">${Math.round(x.v/100)}</text>`:'')}).join('');
+ const it={};for(const d of days)for(const x of by[d.d]||[]){if(x.kind!=='sale'||x.status!=='ok')continue;const k=x.raw.replace(/[\d₹,.\/@]+/g,'').replace(/\b(udhaar|due|warranty|din|cost|sell|sale|pending)\b/gi,'').replace(/\s+/g,' ').trim().toLowerCase().slice(0,28)||'other',e=it[k]||(it[k]={n:0,v:0});e.n++;e.v+=x.amt}
+ const top=Object.entries(it).sort((a,b)=>b[1].n-a[1].n||b[1].v-a[1].v).slice(0,6),tm=Math.max(1,...top.map(e=>e[1].n)),bd=[...days].sort((a,b)=>b.v-a.v).filter(x=>x.v>0).slice(0,3);
+ Q('#v-chart').innerHTML=`<h2>Graph</h2><div class="f2"><button data-a="cr:7"${CN==7?' class="p"':''}>7 din</button><button data-a="cr:30"${CN==30?' class="p"':''}>30 din</button></div><div class="r"><small>Confirmed sales — ${fd(days[0].d)} se ${fd(S.date)} (₹ mein, 100 ke hisaab se label)</small><svg viewBox="0 0 ${WW} ${H+2}" width="100%" role="img" aria-label="Sales graph">${bars}</svg><b>Total ${R(days.reduce((a,x)=>a+x.v,0))}</b></div><h2>Sabse zyada bikne wali cheez</h2>`+(top.map(([k,e])=>`<div class="r"><b>${esc(k)}</b> — ${e.n} baar • ${R(e.v)}<div class="hb" style="width:${Math.max(6,e.n/tm*100)}%"></div></div>`).join('')||'<p class="mu">Abhi data nahi.</p>')+'<h2>Sabse zyada kamai wale din</h2>'+(bd.map(x=>`<div class="r">${fd(x.d)} — <b>${R(x.v)}</b></div>`).join('')||'<p class="mu">Abhi data nahi.</p>')}
+function extra(){const r=rsd(),L=LK()[S.date];
+ Q('#dash').insertAdjacentHTML('beforeend',`<div class="rs"><div class="c"><small>📱 Aaj ka Recharge</small><b id="r1">₹0</b><small>${r.rn} recharge${r.ru?' • +'+R(r.ru)+' unverified':''}</small></div><div class="c"><small>📶 SIM chalu hui</small><b id="r2">0</b><small>${r.sn?R(r.sa)+' SIM se':'aaj koi nahi'}</small></div></div>`);
+ cnt(Q('#r1'),r.rv,R,RV.r);cnt(Q('#r2'),r.sn,v=>v,RV.s);RV.r=r.rv;RV.s=r.sn;
+ dq();Q('#lkb').innerHTML=L?`<div class="lkb">🔒 Ye din band hai — Sales ${R(L.s)} • Mila ${R(L.r)} • Kharcha ${R(L.e)} • ${L.n} entries</div><button data-a="dc">Din kholo</button>`:'<button data-a="dc">🔒 Din band karo</button>';
+ 
+ Q('#sk2').innerHTML=Object.entries(supL()).sort((a,b)=>(b[1].k-b[1].d)-(a[1].k-a[1].d)).map(([s,e])=>`<div class="r k-expense"><b>${esc(s)}</b> — baaki <b>${R(e.k-e.d)}</b><div class="bd">kharid ${R(e.k)} • diya ${R(e.d)}</div><div class="pb"><button data-a="sd" data-c="${esc(s)}">Diya</button></div></div>`).join('')||'<p class="mu">Saman aaya mein likho: "Hyderabad: battery x5 500 diya 200"</p>';
+ Q('#qd').innerHTML=[...new Set([...A.values()].filter(x=>x.kind==='sale').sort((a,b)=>b.created-a.created).map(x=>x.raw))].slice(0,120).map(s=>`<option value="${esc(s)}">`).join('');
+ if(!Q('#v-chart').classList.contains('hid'))chart()}
+const _r=W.render;W.render=()=>{_r();try{extra()}catch(e){console.error(e)}};
+const _sv=W.setv;W.setv=v=>{['stock','chart'].forEach(s=>Q('#v-'+s).classList.toggle('hid',s!==v));_sv(v)};
+const _rt3=W.repText;W.repText=()=>{const t=_rt3(),r=rsd();return t.replace('\nTotal udhaar baaki',`\nRecharge: ${R(r.rv)} (${r.rn})${r.ru?' + unverified '+R(r.ru):''} | SIM chalu: ${r.sn}\nTotal udhaar baaki`)};
+Object.assign(act,{fs:W.fs,fk:W.fk,qs:W.qs,
+ pay:b=>{const x=A.get(b.dataset.id);return x&&lk(x.date)?deny():_pay(b)},fd:()=>lk(S.date)?deny():_fd(),npi:()=>lk(S.date)?deny():_np(),
+ rep:()=>{Q('#op').closest('label').classList.remove('hid');Q('#dr').closest('label').classList.remove('hid');_rep()},
+ 'cr:7':()=>{CN=7;chart()},'cr:30':()=>{CN=30;chart()},
+ dc:async()=>{const L=LK();if(L[S.date]){if(!await ask(fd(S.date)+' ka din kholna hai? Entries phir badal sakti hain.',{ok:'Din kholo'}))return;delete L[S.date]}else{const m=sum(day());if(!await ask(`${fd(S.date)} ka din band karein?\nSales ${R(m.sales)} • Mila ${R(m.rec)} • Kharcha ${R(m.exp)} • ${m.n} entries\nBand hone par is din ki entries badal/delete nahi hongi (baad mein "Din kholo" se khol sakte ho).`,{ok:'Band karo'}))return;L[S.date]={t:Date.now(),s:m.sales,r:m.rec,e:m.exp,n:m.n}}await sv();render()},
+ sd:async b=>{if(lk(S.date))return deny();const c=b.dataset.c,v=await ask(c+' ko kitna diya?\n(e.g. 500 ya 500 upi)',{inp:1,ok:'Save'});if(!v)return;const n=v.match(/\d+(\.\d+)?/);if(!n)return toast('Amount samajh nahi aaya');
+  const r=mk({raw:c+': supplier ko diya '+n[0],kind:'suppay',cat:'Supplier payment',amt:Math.round(n[0]*100),out:null,method:/upi/i.test(v)?'upi':'cash',shop:null,status:'ok'});r.sup=c;try{await put(r,'add');render();toast('Save ✓')}catch(e){toast('Fail: '+e.message)}},
+ si:async()=>{const v=await ask('Item ka naam aur opening quantity\n(e.g. bn5q battery 5)',{inp:1,ok:'Add'});if(!v)return;const m=v.trim().match(/^(.*?)\s*(\d+)?$/),n=m[1].trim().toLowerCase();if(!n)return;(S.stk=S.stk||{})[n]={b:+(m[2]||0),m:2};await sv();render()},
+ sa:async b=>{const n=b.dataset.n;S.stk=S.stk||{};const o=S.stk[n]||(S.stk[n]={b:0,m:2});o.b=(o.b||0)+ +b.dataset.d;await sv();render()},
+ sm:async b=>{const n=b.dataset.n,v=await ask('"'+n+'" kitne ya kam bachne par warning?',{inp:1,num:1,ok:'Save'});if(v===null||v===''||isNaN(+v))return;S.stk=S.stk||{};const o=S.stk[n]||(S.stk[n]={b:0,m:2});o.m=+v;await sv();render()},
+ bill:()=>{if(!cur)return toast('Pehle entry save karo');const x=cur,e=x.war?sh(x.date,x.war):null;
+  const t=[`*${S.shop}*`,`Bill — ${fd(x.date)}`,'------------------------------',x.raw,x.cust?'Customer: '+x.cust:null,`Total: ${R(x.amt||0)}`,x.paid!=null?`Mila: ${R(x.paid)}`:null,x.out?`Baaki: ${R(x.out)}`+(x.due?` (due ${fd(x.due)})`:''):null,e?`Warranty: ${x.war} din (${fd(e)} tak)`:null,'------------------------------','Dhanyavaad 🙏 Phir aana!'].filter(Boolean).join('\n');
+  Q('#ed').close();Q('#rt').value=t;Q('#op').closest('label').classList.add('hid');Q('#dr').closest('label').classList.add('hid');Q('#rd').showModal()},
+ rw:()=>{const p=cur&&cur.cust&&(S.ph||{})[cur.cust];open('https://wa.me/'+(p?'91'+p:'')+'?text='+encodeURIComponent(Q('#rt').value),'_blank')},
+ bsh:async()=>{const j=JSON.stringify({app:'smp',v:1,exported:new Date().toISOString(),att:S.att||null,tx:[...A.values()]}),f=new File([j],'shop-backup-'+TD()+'.json',{type:'application/json'});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Shop Manager backup'});S.lb=Date.now();await sv();render();toast('Backup share ho gaya')}else{act.bak();toast('Share available nahi — file download ho gayi')}}catch(e){if(e.name!=='AbortError')toast('Share fail: '+e.message)}}});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),TD=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
+const lk=d=>!!(S.lock||{})[d],deny=()=>toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.');
+KL.job='Repair job';Q('#f_kind').insertAdjacentHTML('beforeend','<option value="job">Repair job</option>');
+Q('#sg').insertAdjacentHTML('beforeend','<button data-a="md:job">🔧 Repair</button>');Q('#sg').style.gridTemplateColumns='1fr 1fr 1fr';
+Q('#ch').insertAdjacentHTML('afterend','<div id="rc" class="ch"></div>');
+Q('#dq').insertAdjacentHTML('beforebegin','<div id="tg"></div><div id="fx"></div><div id="jb"></div>');
+Q('#hl').insertAdjacentHTML('beforebegin','<button data-a="rcs">⚡ Rate card (one-tap entry)</button><button data-a="fxs">📆 Fixed kharcha (kiraya etc.)</button><button data-a="tgs">🎯 Roz ka sales target</button>');
+const jm=()=>Q('#sg [data-a="md:job"]').classList.contains('p');
+document.addEventListener('click',e=>{if(e.target.closest('[data-a^="md:"]'))setTimeout(()=>{if(jm())q.placeholder='Samsung A12 screen black 500 advance 200 @Rahul due 30/10';q.oninput()},0)});
+// Repair job mode
+const _oi=q.oninput;q.oninput=()=>{_oi();const v=q.value.trim();if(!v||!jm())return;const a=v.match(/(?:advance|adv)\s*(\d+)/i),p=parse(a?v.replace(a[0],' '):v);Q('#pv').textContent='🔧 Repair job'+(p.amt!=null?' • estimate '+R(p.amt):'')+(a?' • advance '+R(+a[1]*100):'')+(p.cust?' • @'+p.cust:'')+(p.due?' • dena '+fd(p.due):'')};
+const _q=W.qs;W.qs=async()=>{if(!jm())return _q();const v=q.value.trim();if(!v||busy)return;if(lk(S.date))return deny();busy=1;
+ try{const a=v.match(/(?:advance|adv)\s*(\d+)/i),p=parse(a?v.replace(a[0],' '):v);p.raw=v;const r=mk(p);Object.assign(r,{kind:'job',cat:'Repair job',js:'recv',adv:a?+a[1]*100:null,cust:p.cust||'',due:p.due||null,out:null,paid:null,cost:null,war:null,sim:null,status:'ok'});
+ await put(r,'add');q.value='';localStorage.d='';Q('#pv').textContent='Job save ✓';render()}catch(e){toast('SAVE NAHI HUA: '+e.message)}busy=0;q.focus()};
+const wa=(x,t)=>{const p=x.cust&&(S.ph||{})[x.cust];open('https://wa.me/'+(p?'91'+p:'')+'?text='+encodeURIComponent(t),'_blank')};
+const jmsg=x=>`Namaste ${x.cust?x.cust+' ji, ':''}${S.shop} se. Aapka phone ready hai.${x.amt!=null?' Total '+R(x.amt)+(x.adv?', advance '+R(x.adv)+' — baaki '+R(x.amt-x.adv):'')+'.':''} Kripya le jaiye 🙏`;
+// Rate card one-tap
+const rcQ=async i=>{const c=(S.rc||[])[i];if(!c||busy)return;if(lk(S.date))return deny();busy=1;try{const raw=c.n+' '+c.p/100,p=parse(raw);p.raw=raw;const r=mk(p);await put(r,'add');render();toast('⚡ '+raw+' save',async()=>{try{await del(r);render()}catch(e){}})}catch(e){toast('Save nahi hua: '+e.message)}busy=0};
+// Customer history inside Search
+const _s=W.srch;W.srch=()=>{_s();const t=Q('#sq').value.trim().toLowerCase();if(t.length<2)return;const E=[...A.values()].filter(x=>x.cust&&x.cust.toLowerCase().includes(t)&&x.status!=='cancelled'),names=[...new Set(E.map(x=>x.cust))];if(!E.length||names.length>3)return;
+ const O=owed(),sl=E.filter(x=>x.kind==='sale'&&x.status==='ok'),tot=sl.reduce((a,x)=>a+x.amt,0),ow=names.reduce((a,n)=>a+Math.max(O[n]||0,0),0),td=TD(),wr=sl.filter(x=>x.war&&sh(x.date,x.war)>=td);
+ Q('#sr').insertAdjacentHTML('afterbegin',`<div class="r k-repay">👤 <b>${esc(names.join(', '))}</b><br>${new Set(sl.map(x=>x.date)).size} visit • kul kharch ${R(tot)} • udhaar baaki <b>${R(ow)}</b>${wr.length?'<br>🛡 Warranty chalu: '+wr.map(x=>esc(x.raw.slice(0,30))+' ('+fd(sh(x.date,x.war))+' tak)').join(', '):''}</div>`)};
+// Shop 1 vs Shop 2 under Graph
+new MutationObserver(()=>{const c=Q('#v-chart');if(!c.children.length||Q('#shc'))return;const n=c.querySelector('[data-a="cr:30"]').classList.contains('p')?30:7,st=sh(S.date,-(n-1)),t={};
+ for(const x of A.values())if(x.kind==='sale'&&x.status==='ok'&&x.date>=st&&x.date<=S.date){const k=x.shop||'Shop tay nahi';t[k]=(t[k]||0)+x.amt}
+ const E=Object.entries(t).sort((a,b)=>b[1]-a[1]),mx=Math.max(1,...E.map(e=>e[1]));
+ c.insertAdjacentHTML('beforeend',`<div id="shc"><h2>🏬 Shop ka muqabla (${n} din)</h2>`+(E.map(([k,v])=>`<div class="r"><b>${esc(k)}</b> — ${R(v)}<div class="hb" style="width:${Math.max(6,v/mx*100)}%"></div></div>`).join('')||'<p class="mu">Abhi data nahi.</p>')+'<small>Sale mein "shop 1" ya "shop 2" likhoge to yahan ginti hoga.</small></div>')}).observe(Q('#v-chart'),{childList:true});
+// Home: target, fixed kharcha, jobs, rate chips
+function ext(){const td=TD(),m=sum(day()),pd=sh(S.date,-1),pv=sum([...A.values()].filter(x=>x.date===pd)).sales,tg=S.tg||0,pc=tg?Math.round(m.sales/tg*100):0;
+ Q('#tg').innerHTML=tg||pv?`<div class="r">${tg?`<small>🎯 Target ${R(tg)}</small> <b>${R(m.sales)}</b> (${pc}%)<div class="hb" style="width:${Math.min(100,Math.max(3,pc))}%"></div>${pc>=100?'🎉 Target pura!':'Baaki '+R(tg-m.sales)}<br>`:''}<small>Pichla din (${fd(pd)}): ${R(pv)} → ${m.sales-pv>=0?'+':'−'}${R(Math.abs(m.sales-pv))}</small></div>`:'';
+ const dom=+td.slice(8),mo=td.slice(0,7),logged=f=>[...A.values()].some(x=>x.cat==='Fixed kharcha'&&x.date.slice(0,7)===mo&&x.raw.toLowerCase().startsWith(f.n.toLowerCase())),F=(S.fx||[]).map((f,i)=>({...f,i})).filter(f=>dom>=f.d&&!logged(f));
+ Q('#fx').innerHTML=F.length?'<h2>📆 Is mahine ka fixed kharcha</h2>'+F.map(f=>`<div class="r k-expense">${esc(f.n)} — ${R(f.a)} <small>(tarikh ${f.d})</small><div class="pb"><button data-a="fxl" data-i="${f.i}">Likh do</button></div></div>`).join(''):'';
+ const J=[...A.values()].filter(x=>x.kind==='job'&&x.js!=='done'&&x.status!=='cancelled').sort((a,b)=>(a.due||'9').localeCompare(b.due||'9')||a.created-b.created);
+ Q('#jb').innerHTML=J.length?'<h2>🔧 Repair jobs chal rahe ('+J.length+')</h2>'+J.map(x=>`<div class="r k-task" data-a="edit" data-id="${x.id}"><div>${esc(x.raw)}</div><div class="bd">${x.js==='ready'?'✅ Ban gaya':'🔧 Chal raha'} • ${fd(x.date)}${x.cust?' • '+esc(x.cust):''}${x.amt!=null?' • estimate '+R(x.amt):''}${x.adv?' • advance '+R(x.adv):''}${x.due?' • dena '+fd(x.due)+(x.due<td?' <i>⚠ der ho gayi</i>':''):''}</div><div class="pb">${x.js==='ready'?'':`<button data-a="jr" data-id="${x.id}">✅ Ban gaya</button>`}<button data-a="jd" data-id="${x.id}">📤 Diya</button><button data-a="jw" data-id="${x.id}">💬</button></div></div>`).join(''):'';
+ Q('#rc').innerHTML=(S.rc||[]).map((c,i)=>`<button data-a="rcq" data-i="${i}">⚡ ${esc(c.n)} ${R(c.p)}</button>`).join('')}
+const _r=W.render;W.render=()=>{_r();try{ext()}catch(e){console.error(e)}};
+const lines=(pr,v)=>{Q('#ct').value=v;return pr};
+Object.assign(act,{qs:W.qs,rcq:b=>rcQ(+b.dataset.i),
+ jr:async b=>{const x=A.get(b.dataset.id);if(!x)return;if(lk(x.date))return deny();wa(x,jmsg(x));try{await put({...x,js:'ready'},'edit',x);render()}catch(e){toast('Fail: '+e.message)}},
+ jw:b=>{const x=A.get(b.dataset.id);x&&wa(x,jmsg(x))},
+ jd:async b=>{const x=A.get(b.dataset.id);if(!x)return;if(lk(S.date))return deny();const v=await ask('Customer ne total kitna diya?\n(e.g. 500 ya 500 upi)'+(x.adv?'\nAdvance mila tha: '+R(x.adv):''),{inp:1,val:x.amt!=null?String(x.amt/100):'',ok:'Diya'});if(!v)return;const n=v.match(/\d+(\.\d+)?/);if(!n)return toast('Amount samajh nahi aaya');
+  const a=Math.round(n[0]*100),s=mk({raw:'Repair: '+x.raw,kind:'sale',cat:'Mobile repair',amt:a,out:null,method:/upi/i.test(v)?'upi':'cash',shop:x.shop,status:'ok'});s.paid=a;s.cust=x.cust||'';
+  try{await put(s,'add');await put({...x,js:'done',done:true},'edit',x);render();toast('Job poora ✓ — sale ban gayi')}catch(e){toast('Fail: '+e.message)}},
+ fxl:async b=>{const f=(S.fx||[])[+b.dataset.i];if(!f)return;if(lk(S.date))return deny();const r=mk({raw:f.n+' kharcha '+f.a/100,kind:'expense',cat:'Fixed kharcha',amt:f.a,out:null,method:null,shop:null,status:'ok'});try{await put(r,'add');render();toast('Kharcha likh diya ✓')}catch(e){toast('Fail: '+e.message)}},
+ rcs:async()=>{const v=await lines(ask('Rate card — har line: naam daam\n(e.g. Battery 180)\nTap karte hi entry save hogi.',{area:1,ok:'Save'}),(S.rc||[]).map(c=>c.n+' '+c.p/100).join('\n'));if(v===null)return;S.rc=v.split('\n').map(l=>l.trim().match(/^(.*?)\s*₹?\s*(\d+(?:\.\d+)?)$/)).filter(m=>m&&m[1]).map(m=>({n:m[1].trim(),p:Math.round(m[2]*100)})).slice(0,12);await sv();render()},
+ fxs:async()=>{const v=await lines(ask('Fixed kharcha — har line: naam daam tarikh\n(e.g. Kiraya 5000 5)',{area:1,ok:'Save'}),(S.fx||[]).map(f=>f.n+' '+f.a/100+' '+f.d).join('\n'));if(v===null)return;S.fx=v.split('\n').map(l=>l.trim().match(/^(.*?)\s+(\d+(?:\.\d+)?)\s+(\d{1,2})$/)).filter(m=>m&&m[1]&&+m[3]>=1&&+m[3]<=31).map(m=>({n:m[1].trim(),a:Math.round(m[2]*100),d:+m[3]})).slice(0,12);await sv();render()},
+ tgs:async()=>{const v=await ask('Roz ka sales target ₹ (khali = hata do):',{inp:1,num:1,val:S.tg?String(S.tg/100):'',ok:'Set'});if(v===null)return;S.tg=v.trim()===''?0:Math.round(parseFloat(v)*100)||0;await sv();render()}});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s);
+// 1) Galti pakadne wala: bada/chhota daam ya duplicate entry
+const med=a=>{a=[...a].sort((x,y)=>x-y);const h=a.length>>1;return a.length%2?a[h]:(a[h-1]+a[h])/2};
+function chk(v){if(Q('#sg button.p').dataset.a!=='md:sale')return '';const p=parse(v),w=[];
+ if(p.amt!=null&&p.kind==='sale'&&p.cat!=='Other'){const s=[...A.values()].filter(x=>x.kind==='sale'&&x.status==='ok'&&x.cat===p.cat&&x.amt>0).map(x=>x.amt);if(s.length>=3){const m=med(s);if(p.amt>=m*5||p.amt<=m/5)w.push(`"${p.cat}" ka aam daam ≈ ${R(m)}, aap ${R(p.amt)} likh rahe ho.`)}}
+ const t=v.toLowerCase(),d=[...A.values()].find(x=>x.date===S.date&&x.raw.trim().toLowerCase()===t&&Date.now()-x.created<6e5);
+ if(d)w.push(`Ye wahi entry ${Math.max(1,Math.round((Date.now()-d.created)/6e4))} minute pehle bhi save hui thi.`);
+ return w.length?w.join('\n')+'\nPakka save karein?':''}
+let pend=0;const _q=W.qs;W.qs=async()=>{if(pend)return;const v=q.value.trim();if(!v)return;pend=1;try{const w=chk(v);if(w&&!await ask(w,{ok:'Haan, save karo'})){q.focus();return}await _q()}finally{pend=0}};
+// 3) Mahine ka poora hisaab
+let MON='';
+function mon(){const mo=S.date.slice(0,7),L=[...A.values()].filter(x=>x.date.startsWith(mo)&&x.status!=='cancelled'),m=sum(L),days={},shp={},it={},ex={},sp={};let pr=0,wc=0,sc=0,rv=0,rn=0,sn=0,si=0,kh=0;
+ for(const x of L){if(x.kind==='sale'&&x.status==='ok'){days[x.date]=(days[x.date]||0)+x.amt;sc++;const k=x.shop||'Shop tay nahi';shp[k]=(shp[k]||0)+x.amt;if(x.cost!=null){pr+=x.amt-x.cost;wc++}
+   if(x.cat==='Recharge'||/recharge/i.test(x.raw)){rv+=x.amt;rn++}sn+=x.sim||(/\bsims?\b/i.test(x.raw)?1:0);
+   const key=x.raw.replace(/[\d₹,.\/@]+/g,'').replace(/\b(udhaar|due|warranty|din|cost|sell|sale|pending)\b/gi,'').replace(/\s+/g,' ').trim().toLowerCase().slice(0,28)||'other';it[key]=(it[key]||0)+1}
+  if(x.kind==='stockin'){si++;kh+=x.amt||0}if(x.kind==='expense'){const c=x.cat||'Kharcha';ex[c]=(ex[c]||0)+x.amt}}
+ for(const x of A.values()){if(x.status==='cancelled'||!x.sup)continue;sp[x.sup]=(sp[x.sup]||0)+(x.kind==='stockin'?(x.amt||0)-(x.paid||0):x.kind==='suppay'?-(x.amt||0):0)}
+ const dk=Object.entries(days).sort((a,b)=>b[1]-a[1]),nd=dk.length,last=new Date(+mo.slice(0,4),+mo.slice(5,7),0).getDate(),ln='------------------------------',
+ nm=new Date(mo+'-01T12:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'}),
+ ow=Object.values(owed()).reduce((a,b)=>a+Math.max(b,0),0),spt=Object.values(sp).reduce((a,b)=>a+Math.max(b,0),0),
+ top=Object.entries(it).sort((a,b)=>b[1]-a[1]).slice(0,5).map(e=>e[0]+' ('+e[1]+')').join(', ');
+ return [`*${S.shop}*`,`Mahine ka Hisaab — ${nm}`,`(01/${mo.slice(5,7)}/${mo.slice(0,4)} se ${last}/${mo.slice(5,7)}/${mo.slice(0,4)})`,ln,
+ 'BIKRI',`Confirmed sales: ${R(m.sales)} (${sc} bill)`,`Unverified (total mein nahi): ${R(m.unv)}`,`Chalu din: ${nd}${nd?' • roz ka average '+R(Math.round(m.sales/nd)):''}`,dk[0]?`Sabse accha din: ${fd(dk[0][0])} — ${R(dk[0][1])}`:null,ln,
+ 'PAISA',`Cash mila: ${R(m.cash)}`,`UPI mila: ${R(m.upi)}`,`Other/method?: ${R(m.oth)}`,`Payment confirm nahi: ${R(m.unc)}`,`Udhaar bana: ${R(m.cr)}`,`Udhaar jama hua: ${R(m.rep)}`,`Kharcha: ${R(m.exp)}`+(Object.keys(ex).length?' ('+Object.entries(ex).map(e=>e[0]+' '+R(e[1])).join(', ')+')':''),`Refund: ${R(m.ref)}`,
+ `Net cash movement = Mila (${R(m.rec)}, udhaar jama sahit) − Kharcha − Refund = ${R(m.net)}`,ln,
+ wc?`PROFIT (sirf cost wali ${wc}/${sc} entries): ${R(pr)}`:'PROFIT: cost kam entries mein likhi hai, isliye nahi nikala',ln,
+ `Recharge: ${R(rv)} (${rn}) | SIM chalu: ${sn}`,ln,
+ 'SHOP-WISE SALES',...Object.entries(shp).sort((a,b)=>b[1]-a[1]).map(e=>`${e[0]}: ${R(e[1])}`),ln,
+ `Saman aaya: ${si} entries${kh?' • kharid '+R(kh):''}`,top?'Zyada bikne wali cheezein: '+top:null,ln,
+ `Total udhaar baaki (sab din): ${R(ow)}`,`Supplier ko dena baaki (sab din): ${R(spt)}`,`Entries: ${m.n}`,ln,'(Sales ≠ profit)','Generated by Shop Manager Pro'].filter(x=>x!=null).join('\n')}
+Q('#rd').addEventListener('close',()=>{MON='';Q('[data-a=rv]').textContent='Day CSV'});
+Q('#hl').insertAdjacentHTML('beforebegin','<button data-a="mr">🧮 Mahine ka poora hisaab</button>');
+const _rv=act.rv,_rep=act.rep;
+Object.assign(act,{qs:W.qs,
+ rep:()=>{cur=null;_rep()},
+ rv:()=>MON?dl('hisaab-'+MON+'.csv',csv([...A.values()].filter(x=>x.date.startsWith(MON)).sort((a,b)=>a.date.localeCompare(b.date))),'text/csv'):_rv(),
+ mr:()=>{cur=null;MON=S.date.slice(0,7);Q('#rt').value=mon();Q('[data-a=rv]').textContent='Month CSV';Q('#op').closest('label').classList.add('hid');Q('#dr').closest('label').classList.add('hid');if(Q('#ed').open)Q('#ed').close();Q('#rd').showModal()}});
+// 2) Ghante ke hisaab se bikri + month button in Graph tab
+new MutationObserver(()=>{const c=Q('#v-chart');if(!c.children.length)return;
+ if(!Q('#mrb'))c.insertAdjacentHTML('afterbegin','<button id="mrb" data-a="mr" style="width:100%;margin:6px 0">🧮 Mahine ka poora hisaab</button>');
+ if(Q('#hrc'))return;const b30=c.querySelector('[data-a="cr:30"]'),n=b30&&b30.classList.contains('p')?30:7,st=sh(S.date,-(n-1)),H=Array.from({length:24},()=>({v:0,n:0}));
+ for(const x of A.values())if(x.kind==='sale'&&x.status==='ok'&&x.date>=st&&x.date<=S.date){const h=new Date(x.created).getHours();H[h].v+=x.amt;H[h].n++}
+ const hs=H.map((x,i)=>x.n?i:-1).filter(i=>i>=0);let out='<div id="hrc"><h2>🕐 Kis time sabse zyada bikri ('+n+' din)</h2>';
+ if(!hs.length)out+='<p class="mu">Abhi data nahi.</p>';else{const lo=Math.min(9,hs[0]),hi=Math.max(21,hs[hs.length-1]),k=hi-lo+1,bw=320/k,mx=Math.max(...H.map(x=>x.v));let pk=lo;for(let h=lo;h<=hi;h++)if(H[h].v>H[pk].v)pk=h;
+  const bars=H.slice(lo,hi+1).map((x,i)=>{const h=lo+i,ht=Math.round(x.v/mx*90);return `<rect class="bar" style="animation-delay:${i*25}ms" x="${i*bw+bw*.15}" y="${108-ht}" width="${bw*.7}" height="${ht}" rx="3" fill="${h===pk?'var(--ac)':'var(--mu)'}" opacity="${h===pk?1:.55}"/>`+(i%2===0?`<text x="${i*bw+bw/2}" y="120" font-size="8" text-anchor="middle" fill="var(--mu)">${h}</text>`:'')+(x.n?`<text x="${i*bw+bw/2}" y="${105-ht}" font-size="8" text-anchor="middle" fill="var(--tx)">${x.n}</text>`:'')}).join('');
+  const q2=[];for(let h=lo;h<=hi;h++)if(!H[h].n)q2.push(h+':00');
+  out+=`<div class="r"><svg viewBox="0 0 320 124" width="100%" role="img" aria-label="Ghante ke hisaab se bikri">${bars}</svg><b>Sabse zyada bikri: ${pk}:00–${pk+1}:00</b> (${R(H[pk].v)}, ${H[pk].n} bill)${q2.length?'<br><small>Khaali ghante: '+q2.slice(0,8).join(', ')+'</small>':''}<br><small>Bar = ₹ bikri, upar number = bill ginti. Entry likhne ke time ke hisaab se (import ki hui entries ka time sahi nahi hota).</small></div>`}
+ c.insertAdjacentHTML('beforeend',out+'</div>')}).observe(Q('#v-chart'),{childList:true});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s);
+Q('#sg').insertAdjacentHTML('afterend','<small class="mu" id="mh">🛒 Bikri = meri dukan se bika • 📦 Saman aaya = dusri dukan se aaya • 🔧 Repair = phone job</small>');
+// Walk-in: readable label instead of "Walk-in 27-2"
+const wk=k=>{const x=[...A.values()].find(e=>e.kind==='sale'&&!e.cust&&'Walk-in '+e.id.slice(-4)===k);return x?x.raw.slice(0,28)+(x.raw.length>28?'…':'')+' • '+fd(x.date).slice(0,5):k};
+const _ask=W.ask;W.ask=(m,o)=>_ask(String(m).replace(/Walk-in [0-9a-f-]{4}/g,k=>wk(k)),o);
+async function rename(k,n){n=n.trim();if(!n)return;const L=[...A.values()].filter(x=>x.cust===k||(!x.cust&&x.kind==='sale'&&x.out&&'Walk-in '+x.id.slice(-4)===k)).map(x=>({...x,cust:n}));if(!L.length)return;try{await bulk(L);render();toast('Naam save ✓')}catch(e){toast('Fail: '+e.message)}}
+function wl(){document.querySelectorAll('#kh .r,#dq .r').forEach(r=>{const bt=r.querySelector('[data-a=repay]'),k=bt&&bt.dataset.c;if(!k||!k.startsWith('Walk-in '))return;r.querySelector('b').textContent='🚶 Walk-in: '+wk(k);const p=r.querySelector('.pb');if(p)p.insertAdjacentHTML('beforeend',`<button data-a="nm" data-c="${esc(k)}">✏️ Naam daalo</button>`)});
+ const own=[...A.values()].filter(x=>!x.hist).length,stale=S.lb?Date.now()-S.lb>6048e5:own>=5;Q('#bk').classList.toggle('hid',!stale);const s=Q('#bk small');if(s)s.textContent=S.lb?'7 din se zyada ho gaye.':'Abhi tak backup nahi liya.'}
+const _r=W.render;W.render=()=>{_r();try{wl()}catch(e){console.error(e)}};
+// "laya/aaya" likha to Saman aaya ka option; udhaar ke baad naam poochna
+const _q=W.qs;W.qs=async()=>{const v=q.value.trim();if(!v||busy)return _q();let sw=0;const md=(Q('#sg button.p')||{dataset:{}}).dataset.a;
+ if(md==='md:sale'&&/\b(laya|laye|aaya|aayi|mangaya|mangwaya)\b|\bse liya\b/i.test(v)){const pr=ask('Ye "Saman aaya" (dusri dukan se) lag raha hai.\nKahan save karein?',{ok:'📦 Saman aaya'});Q('#cn').textContent='🛒 Bikri hi hai';const r=await pr;Q('#cn').textContent='Cancel';if(r){Q('#sg [data-a="md:in"]').click();sw=1}}
+ const t0=Date.now();await _q();if(sw)Q('#sg [data-a="md:sale"]').click();
+ const x=[...A.values()].filter(e=>e.created>=t0&&e.kind==='sale'&&e.out>0&&!e.cust).sort((a,b)=>b.created-a.created)[0];
+ if(x){const n=await ask('Udhaar kiska hai? Naam likho (jama aur WhatsApp ke liye)\nKhali chhodo = Walk-in',{inp:1,ok:'Save'});if(n&&n.trim()){try{await put({...x,cust:n.trim()},'edit',x);render()}catch(e){}}}};
+Object.assign(act,{qs:W.qs,nm:async b=>{const k=b.dataset.c,n=await ask('Is udhaar ka naam likho:\n'+wk(k),{inp:1,ok:'Save'});if(n&&n.trim())rename(k,n)}});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s);
+Q('#rt').insertAdjacentHTML('beforebegin','<div id="ro" class="r hid" style="font-size:13px;line-height:1.5"></div>');
+Q('#sn').style.cursor='pointer';Q('#sn').title='Naam badlo';
+Q('#sn').onclick=async()=>{const n=await ask('Dukaan ka naam likho (report mein dikhega):',{inp:1,val:S.shop,ok:'Save'});if(n&&n.trim()){S.shop=n.trim();await sv();render()}};
+// Clean report: sirf kaam ki cheezein. Baaki sirf aapko (panel) dikhta hai, share/print mein nahi.
+W.repText=()=>{const L=day().filter(x=>x.status!=='cancelled'),m=sum(L),op=S.op[S.date],dr=(S.dr||{})[S.date],ln='------------------------------',
+ bk=L.filter(x=>x.kind!=='stockin'&&x.kind!=='xfer'),si=L.filter(x=>x.kind==='stockin'),has=(x,a)=>a!=null&&new RegExp('(^|\\D)'+a/100+'(\\D|$)').test(x.raw);
+ const t=[`*${S.shop}*`,`Aaj ka Hisaab — ${fd(S.date)}`,ln];
+ bk.forEach((x,i)=>t.push(`${i+1}. ${x.raw}${x.amt!=null&&!has(x,x.amt)?' — '+R(x.amt):''}${x.out&&!/udhaar|udhar|baki|baaki/i.test(x.raw)?' (udhaar '+R(x.out)+')':''}${x.status==='unverified'?' [UNVERIFIED]':''}${['sale','note','task'].includes(x.kind)?'':' ('+KL[x.kind]+')'}`));
+ if(!bk.length)t.push('—');
+ if(si.length){t.push('','SAMAN AAYA (dusri dukan se)');si.forEach((x,i)=>t.push(`${i+1}. ${x.raw}${x.shop?' ['+x.shop+']':''}${x.amt!=null&&!x.ts&&/₹|\brs\b|kharid/i.test(x.raw)&&!has(x,x.amt)?' — kharid '+R(x.amt):''}${{try:' [TRY]',ret:' [WAPAS KARNA]',retd:' [WAPAS KIYA]',bad:' [KHARAB]'}[x.ts]||''}`))}
+ t.push(ln,`Confirmed sales: ${R(m.sales)}`,`Unverified (total mein nahi): ${R(m.unv)}`,`Cash mila: ${R(m.cash)}`,`UPI mila: ${R(m.upi)}`);
+ [['Other mila',m.oth],['Payment confirm nahi',m.unc],['Udhaar bana',m.cr],['Udhaar jama hua',m.rep],['Kharcha',m.exp],['Refund',m.ref]].forEach(([k,v])=>v&&t.push(`${k}: ${R(v)}`));
+ let rv=0,rn=0,sn=0;for(const x of L)if(x.kind==='sale'&&x.status==='ok'){if(x.cat==='Recharge'||/recharge/i.test(x.raw)){rv+=x.amt;rn++}sn+=x.sim||(/\bsims?\b/i.test(x.raw)?1:0)}
+ if(rv||sn)t.push(`Recharge: ${R(rv)} (${rn}) | SIM chalu: ${sn}`);
+ t.push(ln,'Generated by Aayush');
+ const pr=L.filter(x=>x.kind==='sale'&&x.status==='ok'&&x.cost!=null),ow=Object.values(owed()).reduce((a,b)=>a+Math.max(b,0),0),cl=op==null||m.unc?null:op+m.cash-m.exp-m.ref,
+ T=[...A.values()].filter(x=>(x.kind==='task'||(x.kind==='stockin'&&x.due)||(x.kind==='job'&&x.js!=='done'))&&!x.done&&x.status!=='cancelled'&&(x.due||x.date)<=S.date).length,
+ o=[`Net cash movement: <b>${R(m.net)}</b> <small>(mila − kharcha − refund)</small>`];
+ if(op!=null)o.push('Opening cash: '+R(op)+(cl==null?'':` → Closing cash: <b>${R(cl)}</b>`));
+ if(dr!=null)o.push('Drawer actual: '+R(dr)+(cl==null?'':` • Farak: <b>${R(dr-cl)}</b>`));
+ if(pr.length)o.push(`Profit (${pr.length} cost wali entries): <b>${R(pr.reduce((a,x)=>a+x.amt-x.cost,0))}</b>`);
+ o.push('Udhaar baaki (sab din): '+R(ow));if(T)o.push('Pending kaam: '+T);
+ Q('#ro').innerHTML='<small>🔒 Sirf aapke liye — share / print mein nahi aayega</small><br>'+o.join('<br>');Q('#ro').classList.remove('hid');
+ return t.join('\n')};
+// Month report: same safai
+const clean=s=>s.replace(/\n\(Sales ≠ profit\)/,'').replace(/Net cash movement = [^\n]*= (₹[^\n]*)/,'Net cash movement: $1').replace('Generated by Shop Manager Pro','Generated by Aayush');
+const _mr=act.mr,_bl=act.bill;
+act.mr=()=>{_mr();Q('#rt').value=clean(Q('#rt').value);Q('#ro').classList.add('hid')};
+act.bill=()=>{_bl();Q('#ro').classList.add('hid')};
+// Pehli baar dukaan ka naam poochna
+const _r=W.render;W.render=()=>{_r();if(!W._np&&S.shop==='Meri Dukaan'&&!localStorage.namep){W._np=1;localStorage.namep=1;setTimeout(async()=>{const n=await ask('Apni dukaan ka naam likho (report mein dikhega):',{inp:1,val:'Arsh Mobile',ok:'Save'});if(n&&n.trim()){S.shop=n.trim();await sv();render()}},400)}};
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),LK=()=>S.lock||(S.lock={}),lk=d=>!!LK()[d],TD=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
+//<pure
+const DEF=['Hyderabad = haydrabad, haidrabad, hydrabad, hayderabad','Mobile Bajar = mobile bajar, mobile bazar','Bablu = bablu bhaiyaa, bablu bhaiya','Munna','Rivera','Himanshu','Pawan','Png'];
+const TL={try:'🧪 try',ret:'↩ wapas karna hai',retd:'✔ wapas kiya',bad:'🗑 kharab'};
+const cap=s=>s?s[0].toUpperCase()+s.slice(1).toLowerCase():'';
+const SUP=()=>(S.sups&&S.sups.length?S.sups:DEF).map(l=>{const p=l.split('=');return{n:p[0].trim(),al:[p[0].trim(),...(p[1]?p[1].split(','):[])].map(s=>s.trim().toLowerCase()).filter(Boolean).sort((a,b)=>b.length-a.length)}});
+const lev=(a,b)=>{const d=Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]};
+const canon=n=>{const l=String(n||'').toLowerCase().trim(),s=SUP().find(s=>s.al.includes(l));return s?s.n:cap(l)};
+function supOf2(raw){const t=raw.trim(),low=t.toLowerCase();if(/^shop\b/i.test(t))return{sup:'',rest:t};
+ for(const s of SUP())for(const a of s.al)if(low.startsWith(a)&&(low.length===a.length||!/[\p{L}\d]/u.test(low[a.length])))return{sup:s.n,rest:t.slice(a.length).replace(/^[\s:\-–]+/,'')};
+ const c=t.match(/^([^:\-–]{2,30}?)\s*[:\-–]\s*(.+)$/);if(c)return{sup:canon(c[1]),rest:c[2]};
+ const w=t.split(/\s+/)[0],wl=w.toLowerCase();
+ for(const s of SUP())for(const a of s.al)if(!a.includes(' ')&&a.length>=5&&wl.length>=5&&lev(wl,a)<=2)return{sup:s.n,rest:t.slice(w.length).trim()};
+ return{sup:cap(w.replace(/[^\p{L}\d]/gu,'')),rest:t.slice(w.length).trim()}}
+function items(rest){rest=rest.replace(/\bshop\s*[12]\b/ig,' ').replace(/\b(return|done|wapas|try)\b/ig,' ');
+ return rest.split(/\s*(?:\+|,|\band\b|\baur\b)\s*/i).map(p=>{p=p.replace(/₹\s*\d+|\d+\s*₹|\b(?:kharid|rs)\s*\d+/ig,' ');let q=1,m;
+  if(m=p.match(/(?<![A-Za-z])(\d+)\s*(?:pieces?|pcs?|box|sets?|nos)\b/i)){q=+m[1];p=p.replace(m[0],' ')}else if((m=p.match(/\bx\s*(\d+)\b/i))&&+m[1]<=50){q=+m[1];p=p.replace(m[0],' ')}
+  const n=p.replace(/\s+/g,' ').trim().toLowerCase().replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu,'');return n.length>1?{n:nk(n),q}:null}).filter(Boolean)}
+W._sc=new Map();const SIx0=x=>{const r=supOf2(x.raw),m=x.raw.match(/shop\s*([12])/i);return{sup:canon(x.sup||r.sup)||'Naam nahi',items:items(r.rest),ret:!!x.ts||/\breturn\b|\bwapas\b/i.test(x.raw),ts:x.ts||'',shop:x.shop||(m?'Shop '+m[1]:''),kh:x.ts?null:x.cst!=null?x.cst:/₹|\brs\b|kharid/i.test(x.raw)&&x.amt?x.amt:null}};const SIx=x=>{const k=x.raw+'\u0001'+x.sup+'\u0001'+x.ts+'\u0001'+x.shop+'\u0001'+x.cst+'\u0001'+x.amt;let v=W._sc.get(k);if(!v){v=SIx0(x);W._sc.set(k,v)}return v};
+//pure>
+// ---------- CSS ----------
+document.head.insertAdjacentHTML('beforeend','<style>:root{--br:14px}button,input,select,textarea{border-radius:var(--br)}button{font-weight:600;transition:transform .08s,background .15s}button:active{transform:scale(.97)}button.p{box-shadow:0 4px 12px rgba(0,0,0,.18)}#sn{font-size:21px;font-weight:800}#mh,#dl,#lw{display:none!important}'+
+'.hero{background:var(--ac);color:#fff;border-radius:22px;padding:14px 16px;animation:pop .35s ease both}:root[data-t=dark] .hero{color:#04210f}.hero small{color:inherit;opacity:.85}.hero b{font-size:34px;display:block;line-height:1.15}.hero .hr{display:flex;gap:6px 14px;font-size:13px;flex-wrap:wrap;margin-top:4px}'+
+'.dt{margin:6px 0}.dt>summary{cursor:pointer;padding:8px 2px;color:var(--mu);font-weight:600}.dt>.g{margin-top:4px}'+
+'#sg{display:grid;gap:4px;background:var(--cd);border:1px solid var(--bd);border-radius:999px;padding:4px;margin:6px 0}#sg button{border:0;border-radius:999px;min-height:40px;background:none}#sg button.p{background:var(--ac);color:#fff;box-shadow:none}'+
+'.qr{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.qr>*{min-width:0}.qr button:nth-child(1){grid-column:span 4;order:1;font-size:18px;min-height:52px}.qr button:nth-child(4){grid-column:span 2;order:2;min-height:52px;font-size:20px}.qr button:nth-child(2){grid-column:span 3;order:3}.qr button:nth-child(3){grid-column:span 3;order:4}'+
+'.pl{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.pl button{min-height:34px;padding:2px 12px;border-radius:99px;font-size:13px}.tg2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.tg2 button{min-height:56px}'+
+'nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:11px}.cr{display:flex;gap:8px;align-items:center;margin:4px 0}.cr button{width:36px;height:36px;min-height:0;border-radius:50%;padding:0}</style>');
+Q('#sg').style.gridTemplateColumns='repeat(3,1fr)';
+// ---------- Layout: nav, pages ----------
+Q('nav').innerHTML=[['home','🏠','Home'],['saman','📦','Saman'],['stock','🗃️','Stock'],['khata','💰','Udhaar'],['more','☰','Aur']].map(([v,i,t])=>`<button data-a="v:${v}"${v==='home'?' class="on"':''}><span style="font-size:19px">${i}</span>${t}</button>`).join('');
+Q('main').insertAdjacentHTML('beforeend','<section id="v-saman" class="hid"></section><section id="v-more" class="hid"><h2>Kaam aur Tools</h2><div class="tg2"><button data-a="v:chart">📈 Graph</button><button data-a="v:search">🔍 Search</button><button data-a="mr">🧮 Mahine ka hisaab</button><button data-a="v:set">⚙️ Settings</button></div></section>');
+Q('#v-more').append(Q('#lkb'),Q('#tg'),Q('#fx'),Q('#jb'),Q('#tk'));
+Q('#v-khata').prepend(Q('#dq'));
+Q('#v-khata').insertAdjacentHTML('beforeend','<h2>📜 Historical (purana reference hisaab)</h2><details class="dt"><summary id="hsm">dikhao</summary><div id="hs"></div></details>');
+Q('#un').insertAdjacentHTML('beforebegin','<div id="pl" class="pl"></div>');
+Q('#fi').accept='.json,.txt,application/json,text/plain';
+Q('#hl').insertAdjacentHTML('beforebegin','<div class="cr"><small>Rang:</small>'+['#0b8a4a','#1d6fe0','#d9720b','#7b3fe4','#d8333f'].map(c=>`<button data-a="ac" data-c="${c}" style="background:${c}" aria-label="rang"></button>`).join('')+'</div><button data-a="rd">🔘 Button ka shape badlo</button><button data-a="sps">🏪 Dukan / Supplier list</button>');
+const _sv=W.setv;W.setv=v=>{['saman','more'].forEach(s=>Q('#v-'+s).classList.toggle('hid',s!==v));_sv(v)};
+// ---------- Stock ----------
+function stock(){const m={},g=n=>m[n]||(m[n]={n,a:0,s:0,b:0,m:2,sh:{}});for(const n in S.stk||{})g(n);const L=[...A.values()].filter(x=>x.status!=='cancelled');
+ for(const x of L)if(x.kind==='stockin'){const z=SIx(x);if(z.ret)continue;for(const i of z.items){const e=g(i.n);e.a+=i.q;if(z.shop)e.sh[z.shop]=(e.sh[z.shop]||0)+i.q}}
+ const names=Object.keys(m).sort((a,b)=>b.length-a.length);
+ for(const x of L)if(x.kind==='sale'&&x.status==='ok'){let t=x.raw.toLowerCase().replace(/\s+/g,''),qm=x.raw.match(/\bx\s*(\d+)\b/i),q=qm&&+qm[1]<=50?+qm[1]:1;
+  for(const n of names){const tk=n.split(' ').filter(w=>w.length>1);if(tk.length&&tk.every(w=>t.includes(w))){m[n].s+=q;for(const w of tk)t=t.replace(w,'')}}}
+ for(const n in m){const o=(S.stk||{})[n];if(o){m[n].b=o.b||0;m[n].m=o.m==null?2:o.m}m[n].q=m[n].b+m[n].a-m[n].s}return m}
+function stkv(){const m=Object.values(stock()).sort((a,b)=>(a.q<=a.m?0:1)-(b.q<=b.m?0:1)||a.n.localeCompare(b.n));
+ Q('#v-stock').innerHTML='<h2>🗃️ Stock — dukan pe abhi kya hai</h2><button class="p" data-a="si" style="width:100%">＋ Item jodo / abhi kitna hai likho</button><p class="mu"><small>Saman aaya se piece apne aap judte hain, bikri mein item ka naam aaye to ghatte hain. Galat lage to ✏️ Ginti se asli ginti likh do.</small></p>'+
+ (m.map(i=>{const sh=Object.entries(i.sh).map(e=>e[0]+': '+e[1]).join(', '),n=esc(i.n);return `<div class="r ${i.q<=i.m?'unverified':'k-sale'}"><div style="display:flex;justify-content:space-between;align-items:center"><b>${n}</b><b style="font-size:22px">${i.q}</b></div><div class="bd">aaya ${i.a} − bika ${i.s}${i.b?' + adjust '+i.b:''}${sh?' • '+sh:''}${i.q<=i.m?' • <i>⚠ KAM STOCK</i>':''}</div><div class="pb"><button data-a="sa" data-n="${n}" data-d="1">+1</button><button data-a="sa" data-n="${n}" data-d="-1">−1</button><button data-a="sc" data-n="${n}">✏️ Ginti</button><button data-a="sm" data-n="${n}">🔔 Alert</button></div></div>`}).join('')||'<p class="mu">Abhi koi item nahi. "📦 Saman aaya" mein likho ya upar ＋ dabao.</p>')}
+// ---------- Saman page ----------
+function saman(){const el=Q('#v-saman'),mode=el.dataset.m||'day',L=[...A.values()].filter(x=>x.kind==='stockin'&&x.status!=='cancelled').sort((a,b)=>b.date.localeCompare(a.date)||b.created-a.created);
+ const line=(x,z)=>`<div data-a="edit" data-id="${x.id}" style="padding:4px 0;border-top:1px solid var(--bd)">${z.items.length?z.items.map(i=>esc(i.n)+(i.q>1?' ×'+i.q:'')).join(', '):esc(x.raw)}${z.shop?' <small>['+z.shop+']</small>':''}${z.ts?' <i>'+TL[z.ts]+'</i>':z.ret?' <i>↩ return</i>':''}${z.kh?' <small>kharid '+R(z.kh)+'</small>':''}</div>`;
+ let h=`<h2>📦 Dusri dukan se saman</h2><div class="f2"><button data-a="smd" data-m="day"${mode==='day'?' class="p"':''}>📅 Din ke hisaab se</button><button data-a="smd" data-m="sup"${mode==='sup'?' class="p"':''}>🏪 Dukan ke hisaab se</button></div>`;
+ if(mode==='day'){const D={};for(const x of L)(D[x.date]=D[x.date]||[]).push(x);const ds=Object.keys(D).sort().reverse();if(!D[S.date])ds.unshift(S.date);
+  h+=ds.slice(0,15).map(d=>{const g={};for(const x of D[d]||[]){const z=SIx(x);(g[z.sup]=g[z.sup]||[]).push([x,z])}
+   return `<details class="dt"${d===S.date?' open':''}><summary><b>${fd(d)}</b>${d===S.date?' (active din)':''} — ${(D[d]||[]).length} entries, ${Object.keys(g).length} dukan</summary>`+(Object.entries(g).map(([s,a])=>`<div class="r k-repay"><b>🏪 ${esc(s)}</b>${a.map(([x,z])=>line(x,z)).join('')}</div>`).join('')||'<p class="mu">Is din koi saman nahi aaya.</p>')+'</details>'}).join('')}
+ else{const T={};for(const x of L){const z=SIx(x),e=T[z.sup]||(T[z.sup]={n:0,last:x.date,it:{},kh:0});e.n++;e.kh+=z.kh||0;if(!z.ret)for(const i of z.items)e.it[i.n]=(e.it[i.n]||0)+i.q}
+  h+=Object.entries(T).sort((a,b)=>b[1].n-a[1].n).map(([s,e])=>`<div class="r k-repay"><b>🏪 ${esc(s)}</b> — ${e.n} baar aaya <small>(aakhri: ${fd(e.last)})</small>${e.kh?'<br><small>kharid '+R(e.kh)+'</small>':''}<div class="bd">${Object.entries(e.it).sort((a,b)=>b[1]-a[1]).map(([n,q])=>esc(n)+' ×'+q).join(' • ')||'—'}</div></div>`).join('')||'<p class="mu">Abhi koi saman nahi.</p>'}
+ el.innerHTML=h}
+// ---------- Home ----------
+function ap(){const r=document.documentElement.style;S.ac?r.setProperty('--ac',S.ac):r.removeProperty('--ac');r.setProperty('--br',S.rd||'14px')}
+function ui(){ap();const L=day(),m=sum(L);let pr=0,wc=0;for(const x of L)if(x.kind==='sale'&&x.status==='ok'&&x.cost!=null){pr+=x.amt-x.cost;wc++}
+ const rs=Q('#dash .rs'),C=(t,v)=>`<div class="c"><small>${t}</small><b>${v}</b></div>`;
+ Q('#dash').innerHTML=`<div class="hero" style="grid-column:1/-1"><small>${fd(S.date)} • aaj ki bikri</small><b>${R(m.sales)}</b><div class="hr"><span>💵 Cash ${R(m.cash)}</span><span>📲 UPI ${R(m.upi)}</span><span>🧾 Kharcha ${R(m.exp)}</span></div></div>`;
+ if(rs)Q('#dash').append(rs);
+ Q('#dash').insertAdjacentHTML('beforeend',`<details class="dt" style="grid-column:1/-1"><summary>Poora hisaab dekho</summary><div class="g">${C('Net cash movement',R(m.net))}${C('Other / method?',R(m.oth))}${C('Payment confirm nahi',R(m.unc))}${C('Unverified sale',R(m.unv))}${C('Bill / entries',m.jobs+' / '+m.n)}${wc?C('Profit ('+wc+' cost wali)',R(pr)):''}</div></details>`);
+ const bk=L.filter(x=>!['stockin','job','xfer'].includes(x.kind)&&x.status!=='unverified'&&x.kind!=='note');
+ Q('#ls').innerHTML='<h2>Aaj ki entries ('+bk.length+')</h2>'+(bk.map(x=>row(x)).join('')||'<p class="mu">Abhi koi entry nahi. Upar likho: "Battery sell 180" aur Enter dabao.</p>');
+ const n=s=>document.querySelectorAll(s).length,J=[...A.values()].filter(x=>x.kind==='job'&&x.js!=='done'&&x.status!=='cancelled').length,low=Object.values((W._SM.stock3||stock)()).filter(i=>i.q<=i.m).length,sa=L.filter(x=>x.kind==='stockin').length,P=[];
+ if(sa)P.push(['v:saman','📦 Aaj saman: '+sa]);if(J)P.push(['v:more','🔧 Jobs: '+J]);if(n('#dq .r'))P.push(['v:khata','💰 Lena hai: '+n('#dq .r')]);if(n('#fx .r'))P.push(['v:more','📆 Kharcha: '+n('#fx .r')]);if(n('#tk .r'))P.push(['v:more','📌 Kaam: '+n('#tk .r')]);if(low)P.push(['v:stock','⚠ Kam stock: '+low]);if(lk(S.date))P.push(['dc','🔒 Din band']);
+ Q('#pl').innerHTML=P.map(p=>`<button data-a="${p[0]}">${p[1]}</button>`).join('');
+ const H=[...A.values()].filter(x=>x.hist).sort((a,b)=>a.date.localeCompare(b.date)||a.created-b.created);Q('#hsm').textContent=H.length+' purani entries — dikhao';Q('#hs').innerHTML=H.map(x=>row(x,1)).join('');
+ const sp={};for(const x of A.values()){if(x.status==='cancelled')continue;if(x.kind==='stockin'){const z=SIx(x),e=sp[z.sup]||(sp[z.sup]={k:0,d:0});e.k+=z.kh||0;e.d+=x.paid||0}else if(x.kind==='suppay'&&x.sup){const k=canon(x.sup),e=sp[k]||(sp[k]={k:0,d:0});e.d+=x.amt||0}}
+ Q('#sk2').innerHTML=Object.entries(sp).filter(([s,e])=>e.k||e.d).sort((a,b)=>(b[1].k-b[1].d)-(a[1].k-a[1].d)).map(([s,e])=>`<div class="r k-expense"><b>${esc(s)}</b> — baaki <b>${R(e.k-e.d)}</b><div class="bd">kharid ${R(e.k)} • diya ${R(e.d)}</div><div class="pb"><button data-a="sd" data-c="${esc(s)}">Diya</button></div></div>`).join('')||'<p class="mu">Saman aaya mein ₹ ke saath daam likho (jaise "Hyderabad cover ₹500 diya 200") to yahan hisaab banega.</p>';
+ if(!Q('#v-saman').classList.contains('hid'))saman()}
+const _r=W.render;W.render=()=>{_r();try{ui()}catch(e){console.error(e)}};
+// ---------- Saman aaya entry: supplier + items samajhna, bina galat daam ke ----------
+const _q=W.qs;W.qs=async()=>{const v=q.value.trim();if(!v||busy)return _q();
+ if(Q('#sg button.p').dataset.a!=='md:in')return _q();
+ if(lk(S.date))return toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.');
+ busy=1;try{const z=supOf2(v),p=parse(v),r=mk({raw:v,kind:'stockin',cat:'Saman aaya',amt:/₹|\brs\b|kharid/i.test(v)?p.amt:null,out:null,method:null,shop:p.shop,status:'ok'});r.sup=z.sup||null;r.paid=p.spaid==null?null:p.spaid;
+  await put(r,'add');q.value='';localStorage.d='';const it=items(z.rest);Q('#pv').textContent='';render();toast('📦 '+(z.sup||'Naam nahi')+': '+(it.length?it.map(i=>i.n+(i.q>1?' ×'+i.q:'')).join(', '):'save ho gaya'))}catch(e){toast('SAVE NAHI HUA: '+e.message)}busy=0;q.focus()};
+W._SM={SIx,canon,stock,items,supOf2,DEF,TL};
+// ---------- Acts ----------
+Object.assign(act,{qs:W.qs,
+ smd:b=>{Q('#v-saman').dataset.m=b.dataset.m;saman()},
+ sc:async b=>{const n=b.dataset.n,e=stock()[n];if(!e)return;const v=await ask('"'+n+'" abhi dukan mein kitne hain?',{inp:1,num:1,val:String(e.q),ok:'Save'});if(v===null||v===''||isNaN(+v))return;S.stk=S.stk||{};S.stk[n]=Object.assign(S.stk[n]||{m:2},{b:+v-(e.a-e.s)});await sv();render()},
+ si:async()=>{const v=await ask('Item ka naam aur abhi kitne hain?\n(e.g. v8 charge 5)',{inp:1,ok:'Save'});if(!v)return;const m=v.trim().match(/^(.*?)\s*(\d+)?$/),n=m[1].trim().toLowerCase();if(!n)return;const e=stock()[n]||{a:0,s:0};S.stk=S.stk||{};S.stk[n]=Object.assign(S.stk[n]||{m:2},{b:(m[2]==null?0:+m[2])-(e.a-e.s)});await sv();render()},
+ ac:b=>{S.ac=b.dataset.c;sv();ap()},
+ rd:()=>{const a=['14px','6px','24px'];S.rd=a[(a.indexOf(S.rd||'14px')+1)%3];sv();ap();toast('Shape badal gaya')},
+ sps:async()=>{const pr=ask('Dukan / supplier list — har line: Naam = spelling1, spelling2\n(e.g. Hyderabad = haydrabad, haidrabad)',{area:1,ok:'Save'});Q('#ct').value=(S.sups&&S.sups.length?S.sups:DEF).join('\n');const v=await pr;if(v===null)return;S.sups=v.split('\n').map(s=>s.trim()).filter(Boolean);await sv();render()},
+ bsh:async()=>{const d=TD(),j=JSON.stringify({app:'smp',v:1,exported:new Date().toISOString(),att:S.att||null,tx:[...A.values()]}),f=new File([j],'shop-backup-'+d+'.txt',{type:'text/plain'});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Shop backup '+d});S.lb=Date.now();await sv();render();toast('Backup share ho gaya');return}}catch(e){if(e.name==='AbortError')return}
+  act.bak();toast('Share nahi ho paya — backup file Downloads mein save ho gayi. Use WhatsApp/Drive mein attach kar do.')}});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),LK=()=>S.lock||(S.lock={}),lk=d=>!!LK()[d],{SIx,canon,items,TL}=W._SM;
+KL.xfer='Shop → Shop';['#f_kind','#sk'].forEach(s=>Q(s).insertAdjacentHTML('beforeend','<option value="xfer">Shop → Shop</option>'));
+// ---------- Dukan ka poora detail (date ke hisaab se) ----------
+const line=(x,z)=>`<div data-a="edit" data-id="${x.id}" style="padding:4px 0;border-top:1px solid var(--bd)">${z.items.length?z.items.map(i=>esc(i.n)+(i.q>1?' ×'+i.q:'')).join(', '):esc(x.raw)}${z.shop?' <small>['+z.shop+']</small>':''}${z.ts?' <i>'+TL[z.ts]+'</i>':z.ret?' <i>↩ return</i>':''}${z.kh?' <small>kharid '+R(z.kh)+'</small>':''}</div>`;
+function det(){const el=Q('#v-saman'),s=el.dataset.s,L=[...A.values()].filter(x=>x.kind==='stockin'&&x.status!=='cancelled').map(x=>[x,SIx(x)]).filter(([x,z])=>z.sup===s).sort((a,b)=>b[0].date.localeCompare(a[0].date)||b[0].created-a[0].created);
+ const D={},tot={};let pcs=0,kh=0,pd=0;
+ for(const[x,z]of L){(D[x.date]=D[x.date]||[]).push([x,z]);kh+=z.kh||0;pd+=x.paid||0;if(!z.ret)for(const i of z.items){tot[i.n]=(tot[i.n]||0)+i.q;pcs+=i.q}}
+ for(const x of A.values())if(x.kind==='suppay'&&x.status!=='cancelled'&&x.sup&&canon(x.sup)===s)pd+=x.amt||0;
+ const ds=Object.keys(D).sort().reverse();
+ el.innerHTML=`<button data-a="sdb" style="margin-top:6px">← Saari dukaanein</button><h2>🏪 ${esc(s)}</h2><div class="r k-repay"><b>${L.length}</b> baar saman aaya • <b>${pcs}</b> piece<br><small>Pehli baar: ${ds.length?fd(ds[ds.length-1]):'—'} • Aakhri: ${ds.length?fd(ds[0]):'—'}</small>${kh||pd?`<br><small>Kharid ${R(kh)} • Diya ${R(pd)} • Baaki ${R(kh-pd)}</small>`:''}</div>`+
+ '<h2>Kul kya kya aaya</h2><div class="r">'+(Object.entries(tot).sort((a,b)=>b[1]-a[1]).map(([n,q])=>esc(n)+' ×'+q).join(' • ')||'—')+'</div><h2>Date ke hisaab se</h2>'+
+ (ds.map(d=>`<div class="r k-repay"><b>${fd(d)}</b> <small>(${D[d].length} entries)</small>${D[d].map(([x,z])=>line(x,z)).join('')}</div>`).join('')||'<p class="mu">Is dukan se abhi koi saman nahi.</p>')}
+function tag(){const m=Q('#v-saman').dataset.m;document.querySelectorAll('#v-saman .r.k-repay').forEach(c=>{const b=c.querySelector('b');if(!b||!/^🏪/.test(b.textContent))return;const n=b.textContent.replace(/^🏪\s*/,'').trim();b.textContent+=' ›';if(m==='sup'){c.dataset.a='sdt';c.dataset.s=n;c.style.cursor='pointer'}else{b.dataset.a='sdt';b.dataset.s=n;b.style.cursor='pointer'}})}
+// ---------- Shop 1 / Shop 2 alag stock + transfer ----------
+//<s3
+function stock3(){const SH=['Shop 1','Shop 2'],m={},g=n=>m[n]||(m[n]={n,sh:{'Shop 1':0,'Shop 2':0},a:0,s:0,m:2});for(const n in mgS()||{})g(n);
+ const L=[...A.values()].filter(x=>x.status!=='cancelled'&&['stockin','xfer','sale'].includes(x.kind)&&(x.kind!=='sale'||x.status==='ok')).sort((a,b)=>a.date.localeCompare(b.date)||a.created-b.created);
+ for(const x of L){if(x.kind==='stockin'){const z=SIx(x);if(!z.ret)for(const i of z.items)g(i.n)}else if(x.kind==='xfer')for(const i of x.it||[])g(nk(i.n))}
+ const names=Object.keys(m).sort((a,b)=>b.length-a.length);
+ for(const x of L){if(x.kind==='stockin'){const z=SIx(x);if(z.ret)continue;for(const i of z.items){const e=m[i.n],k=z.shop&&e.sh[z.shop]!==undefined?z.shop:'Shop 1';e.sh[k]+=i.q;e.a+=i.q}}
+  else if(x.kind==='xfer'){for(const i of x.it||[]){const e=m[nk(i.n)];if(e&&e.sh[x.from]!==undefined&&e.sh[x.to]!==undefined){e.sh[x.from]-=i.q;e.sh[x.to]+=i.q}}}
+  else{for(const l of x.sk||[]){const e=m[nk(l.n)];if(!e)continue;const k=l.sh&&e.sh[l.sh]!==undefined?l.sh:(e.sh['Shop 1']>=e.sh['Shop 2']?'Shop 1':'Shop 2');e.sh[k]-=l.q;e.s+=l.q}}}
+ for(const n in m){const o=(S.stk||{})[n]||{},e=m[n];e.m=o.m==null?2:o.m;if(o.b)e.sh['Shop 1']+=o.b;const sb=o.sb||{};for(const k of SH)e.sh[k]+=sb[k]||0;e.q=e.sh['Shop 1']+e.sh['Shop 2']}return m}
+//s3>
+W._SM.stock3=stock3;
+function stk3(){const m=Object.values(stock3()).sort((a,b)=>(a.q<=a.m?0:1)-(b.q<=b.m?0:1)||a.n.localeCompare(b.n)),col=v=>v<0?' style="color:#d33"':'';
+ Q('#v-stock').innerHTML='<h2>🗃️ Stock — Shop 1 aur Shop 2</h2><button class="p" data-a="si3" style="width:100%">＋ Item jodo / abhi kitne hain likho</button><p class="mu"><small>Saman aaya se piece us dukan mein judte hain jo "shop 1/2" likha ho. Bikri mein item ka naam aaye to ghatte hain (shop likha ho to wahi se, warna jahan zyada ho). Ek dukan se dusri mein bhejne ke liye Quick Entry mein likho: <b>shop 1 se shop 2 v8 charge 2 piece</b>. Galat lage to ✏️ Ginti se asli ginti likh do.</small></p>'+
+ (m.map(i=>{const n=esc(i.n);return `<div class="r ${i.q<=i.m?'unverified':'k-sale'}"><div style="display:flex;justify-content:space-between;align-items:center"><b>${n}</b><b style="font-size:22px">${i.q}</b></div><div class="bd">🏬 Shop 1: <b${col(i.sh['Shop 1'])}>${i.sh['Shop 1']}</b> • Shop 2: <b${col(i.sh['Shop 2'])}>${i.sh['Shop 2']}</b>${i.q<=i.m?' • <i>⚠ KAM STOCK</i>':''}<br>aaya ${i.a} • bika ${i.s}</div><div class="pb"><button data-a="xf" data-n="${n}">🔁 Bhejo</button><button data-a="sc3" data-n="${n}">✏️ Ginti</button><button data-a="sm" data-n="${n}">🔔 Alert</button></div></div>`}).join('')||'<p class="mu">Abhi koi item nahi. "📦 Saman aaya" mein likho ya upar ＋ dabao.</p>')}
+async function setCounts(n,a,c){const e=stock3()[n]||{sh:{'Shop 1':0,'Shop 2':0}};S.stk=S.stk||{};const o=S.stk[n]=Object.assign({m:2},S.stk[n]);o.sb=o.sb||{};
+ if(a!=null)o.sb['Shop 1']=(o.sb['Shop 1']||0)+(a-e.sh['Shop 1']);if(c!=null)o.sb['Shop 2']=(o.sb['Shop 2']||0)+(c-e.sh['Shop 2']);await sv();render()}
+const _r=W.render;W.render=()=>{_r();try{const el=Q('#v-saman');if(!el.classList.contains('hid')){if(el.dataset.m==='det')det();else tag()}if(!Q('#v-stock').classList.contains('hid'))stk3()}catch(e){console.error(e)}};
+// ---------- Quick Entry: "shop 1 se shop 2 v8 charge 2 piece" ----------
+const TR=/\bshop\s*([12])\s*(?:se|to|>|->|→)\s*shop\s*([12])\b/i,_q=W.qs;
+W.qs=async()=>{const v=q.value.trim(),m=v.match(TR);if(!v||busy||!m||m[1]===m[2]||Q('#sg button.p').dataset.a==='md:job')return _q();
+ if(lk(S.date))return toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.');const it=items(v.replace(m[0],' '));
+ if(!it.length)return toast('Kaun sa saman bheja? Jaise: shop 1 se shop 2 v8 charge 2 piece');
+ const f='Shop '+m[1],t='Shop '+m[2];if(!await ask(`🔁 ${f} → ${t}\n${it.map(i=>i.n+' ×'+i.q).join(', ')}\nSave karein?`,{ok:'Save'}))return;
+ busy=1;try{const r=mk({raw:v,kind:'xfer',cat:'Shop transfer',amt:null,out:null,method:null,shop:null,status:'ok'});r.from=f;r.to=t;r.it=it;await put(r,'add');q.value='';localStorage.d='';Q('#pv').textContent='';render();toast('🔁 Transfer save ✓')}catch(e){toast('SAVE NAHI HUA: '+e.message)}busy=0;q.focus()};
+// ---------- Din band par backup ----------
+const _dc=act.dc;
+Object.assign(act,{qs:W.qs,
+ sdt:b=>{const el=Q('#v-saman');el.dataset.m='det';el.dataset.s=b.dataset.s;render();scrollTo(0,0)},
+ sdb:()=>{Q('#v-saman').dataset.m='sup';render()},
+ smd:b=>{Q('#v-saman').dataset.m=b.dataset.m;render()},
+ si3:async()=>{const v=await ask('Item ka naam aur abhi kitne hain?\n(e.g. v8 charge s1 5 s2 3)\ns1 = Shop 1, s2 = Shop 2',{inp:1,ok:'Save'});if(!v)return;const m=v.trim().match(/^(.*?)\s*(?:s1\s*(-?\d+))?\s*(?:s2\s*(-?\d+))?$/i),n=m[1].trim().toLowerCase();if(!n)return;await setCounts(n,m[2]==null?0:+m[2],m[3]==null?0:+m[3])},
+ sc3:async b=>{const n=b.dataset.n,e=stock3()[n];if(!e)return;const v=await ask('"'+n+'" abhi kitne hain?\nFormat: s1 5, s2 3  (s1 = Shop 1, s2 = Shop 2)',{inp:1,val:`s1 ${e.sh['Shop 1']}, s2 ${e.sh['Shop 2']}`,ok:'Save'});if(v===null)return;const a=v.match(/s1\s*(-?\d+)/i),c=v.match(/s2\s*(-?\d+)/i);if(!a&&!c)return toast('Format: s1 5, s2 3');await setCounts(n,a?+a[1]:null,c?+c[1]:null)},
+ xf:async b=>{const n=b.dataset.n,v=await ask('"'+n+'" kitne piece bhejne hain?\nFormat: 2 s1>s2  (Shop 1 se Shop 2) ya 2 s2>s1',{inp:1,ok:'Bhejo'});if(!v)return;const m=v.match(/(\d+)\s*s([12])\s*(?:>|->|→|se|to)\s*s([12])/i);if(!m||m[2]===m[3])return toast('Format: 2 s1>s2');if(lk(S.date))return toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.');
+  const qn=+m[1],f='Shop '+m[2],t='Shop '+m[3],r=mk({raw:`${f} se ${t}: ${n} ×${qn}`,kind:'xfer',cat:'Shop transfer',amt:null,out:null,method:null,shop:null,status:'ok'});r.from=f;r.to=t;r.it=[{n,q:qn}];try{await put(r,'add');render();toast('🔁 '+f+' → '+t+': '+n+' ×'+qn)}catch(e){toast('Fail: '+e.message)}},
+ dc:async()=>{const was=lk(S.date);await _dc();if(!was&&lk(S.date)){const pr=ask('Din band ho gaya ✅\nAb backup WhatsApp / Drive par bhej dein?',{ok:'📤 Backup bhejo'});Q('#cn').textContent='Baad mein';const ok=await pr;Q('#cn').textContent='Cancel';if(ok)act.bsh()}}});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),LK=()=>S.lock||(S.lock={}),lk=d=>!!LK()[d],TD=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'}),{SIx}=W._SM;
+let TRY=localStorage.tryon==='1';
+const inM=()=>Q('#sg button.p').dataset.a==='md:in',dn=()=>toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.');
+// ---------- Try ON/OFF option (baar baar "try" likhna na pade) ----------
+Q('#sg').insertAdjacentHTML('afterend','<button id="tryb" class="hid" data-a="trytog" style="width:100%;margin:2px 0 6px"></button>');
+const tb=()=>{const b=Q('#tryb');b.classList.toggle('hid',!inM());b.classList.toggle('p',TRY);b.textContent='🧪 Try mein daalo: '+(TRY?'ON ✓ (stock mein nahi judega)':'OFF')};
+document.addEventListener('click',e=>{if(e.target.closest('[data-a^="md:"]'))setTimeout(tb,0)});tb();
+const _q=W.qs,_oi=q.oninput;
+W.qs=async()=>{const v=q.value.trim();if(!v||busy||!inM()||!(TRY||/\btry\b/i.test(v)))return _q();const t0=Date.now();await _q();
+ const x=[...A.values()].filter(e=>e.kind==='stockin'&&e.created>=t0&&!e.ts).sort((a,b)=>b.created-a.created)[0];
+ if(x){try{await put({...x,ts:'try'},'edit',x);render();toast('🧪 Try mein daala — Saman page mein Laga / Return / Kharab chuno')}catch(e){toast('Fail: '+e.message)}}};
+q.oninput=()=>{_oi();const v=q.value.trim();if(v&&inM()&&(TRY||/\btry\b/i.test(v)))Q('#pv').textContent+=' • 🧪 TRY'};
+// ---------- Edit dialog: "Saman ki sthiti" (lag gaya = done) ----------
+Q('#f_sup').closest('label').insertAdjacentHTML('afterend','<label id="tsl">Saman ki sthiti<select id="f_ts"><option value="">Normal (laga hua)</option><option value="try">🧪 Try — abhi decide nahi</option><option value="lag">✅ Lag gaya</option><option value="ret">↩ Wapas karna hai</option><option value="retd">✔ Wapas kar diya</option><option value="bad">🗑 Kharab</option></select></label>');
+const tsv=()=>Q('#tsl').classList.toggle('hid',Q('#f_kind').value!=='stockin');Q('#f_kind').addEventListener('change',tsv);
+const _o=W.openEd;W.openEd=x=>{_o(x);Q('#f_ts').value=x&&x.kind==='stockin'?(x.ts||(x.ld?'lag':'')):'';tsv()};
+const _fs=W.fs;W.fs=async()=>{const id=cur&&cur.id,ids=new Set(A.keys()),v=Q('#f_ts').value;await _fs();if(Q('#ed').open)return;const r=id?A.get(id):[...A.values()].find(x=>!ids.has(x.id));
+ if(!r||r.kind!=='stockin')return;if(v===(r.ts||(r.ld?'lag':'')))return;const n={...r,ts:v==='lag'?'':v};if(v==='lag')n.ld=S.date;try{await put(n,'edit',r);render()}catch(e){toast('Fail: '+e.message)}};
+// ---------- Try & Return page ----------
+function trypg(){const el=Q('#v-saman'),L=[...A.values()].filter(x=>x.kind==='stockin'&&x.status!=='cancelled').sort((a,b)=>a.date.localeCompare(b.date)||a.created-b.created),
+ dy=d=>{const n=Math.max(0,Math.round((new Date(TD())-new Date(d))/864e5));return n?n+' din se':'aaj aaya'},
+ txt=(x,z)=>(z.items.length?z.items.map(i=>esc(i.n)+(i.q>1?' ×'+i.q:'')).join(', '):esc(x.raw))+(z.shop?' <small>['+z.shop+']</small>':''),
+ grp=f=>{const g={};for(const x of L.filter(f)){const z=SIx(x);(g[z.sup]=g[z.sup]||[]).push([x,z])}return g},
+ T=grp(x=>x.ts==='try'),Rt=grp(x=>x.ts==='ret'),lag=L.filter(x=>x.ld===S.date&&!x.ts),bad=L.filter(x=>x.ts==='bad').slice(-8),cnt=g=>Object.values(g).reduce((a,b)=>a+b.length,0),
+ bt=x=>`<div class="pb"><button data-a="tsl" data-id="${x.id}">✅ Laga</button><button data-a="tsr" data-id="${x.id}">↩ Return</button><button data-a="tsb" data-id="${x.id}">🗑 Kharab</button></div>`;
+ let h='<h2>📦 Dusri dukan se saman</h2><div class="f2" style="grid-template-columns:1fr 1fr 1fr;font-size:13px"><button data-a="smd" data-m="day">📅 Din ke hisaab se</button><button data-a="smd" data-m="sup">🏪 Dukan ke hisaab se</button><button data-a="smd" data-m="try" class="p">🧪 Try</button></div>'+
+ `<div class="r"><small>${fd(S.date)} ka summary</small><br>✅ Aaj lag gaya: <b>${lag.length}</b> • ⏳ Try baaki: <b>${cnt(T)}</b> • ↩ Wapas karna: <b>${cnt(Rt)}</b></div>`;
+ h+='<h2>⏳ Abhi decide nahi</h2>'+(Object.entries(T).map(([s,a])=>`<div class="r k-task"><b>🏪 ${esc(s)}</b>${a.map(([x,z])=>`<div style="padding:6px 0;border-top:1px solid var(--bd)"><div data-a="edit" data-id="${x.id}">${txt(x,z)} <small>(${dy(x.date)})</small></div>${bt(x)}</div>`).join('')}</div>`).join('')||'<p class="mu">Koi try baaki nahi. 📦 Saman aaya mein "🧪 Try mein daalo" ON karke likho.</p>');
+ h+='<h2>↩ Wapas karna hai</h2>'+(Object.entries(Rt).map(([s,a])=>`<div class="r k-expense"><b>🏪 ${esc(s)}</b>${a.map(([x,z])=>`<div data-a="edit" data-id="${x.id}" style="padding:4px 0;border-top:1px solid var(--bd)">${txt(x,z)} <small>(${dy(x.date)})</small></div>`).join('')}<div class="pb"><button data-a="tsw" data-s="${esc(s)}">💬 WhatsApp</button><button data-a="tsd" data-s="${esc(s)}">✔ Wapas kar diya</button></div></div>`).join('')||'<p class="mu">Wapas karne ko kuch nahi.</p>');
+ h+='<h2>✅ Aaj lag gaya</h2>'+(lag.map(x=>{const z=SIx(x);return `<div class="r k-sale" data-a="edit" data-id="${x.id}">${txt(x,z)} <small>— ${esc(z.sup)}</small></div>`}).join('')||'<p class="mu">Aaj kuch nahi laga.</p>');
+ if(bad.length)h+='<h2>🗑 Kharab (pichle)</h2>'+bad.map(x=>{const z=SIx(x);return `<div class="r" data-a="edit" data-id="${x.id}">${txt(x,z)} <small>— ${esc(z.sup)} • ${fd(x.date)}</small></div>`}).join('');
+ el.innerHTML=h}
+function post(){const el=Q('#v-saman'),m=el.dataset.m||'day';
+ if(!el.classList.contains('hid')){if(m==='try')trypg();else if(m!=='det'){const f=el.querySelector('.f2');if(f&&!f.querySelector('[data-m="try"]')){f.style.gridTemplateColumns='1fr 1fr 1fr';f.style.fontSize='13px';f.insertAdjacentHTML('beforeend','<button data-a="smd" data-m="try">🧪 Try</button>')}}}
+ const L=[...A.values()].filter(x=>x.kind==='stockin'&&x.status!=='cancelled'),nT=L.filter(x=>x.ts==='try').length,nR=L.filter(x=>x.ts==='ret').length;
+ if(nT||nR)Q('#pl').insertAdjacentHTML('beforeend',(nT?`<button data-a="trypg">🧪 Try baaki: ${nT}</button>`:'')+(nR?`<button data-a="trypg">↩ Wapas karna: ${nR}</button>`:''));tb()}
+const _r=W.render;W.render=()=>{_r();try{post()}catch(e){console.error(e)}};
+// ---------- Actions ----------
+const upd=async(x,ch,msg,undo)=>{if(lk(x.date))return dn();try{await put({...x,...ch},'edit',x);render();toast(msg,undo?async()=>{try{await put(x,'edit',A.get(x.id));render()}catch(e){}}:undefined)}catch(e){toast('Fail: '+e.message)}};
+Object.assign(act,{qs:W.qs,fs:W.fs,
+ trytog:()=>{TRY=!TRY;localStorage.tryon=TRY?'1':'0';tb()},
+ trypg:()=>{Q('#v-saman').dataset.m='try';setv('saman')},
+ tsl:async b=>{const x=A.get(b.dataset.id);if(!x)return;const v=await ask('✅ Lag gaya!\nKharid / cost likhna ho to ₹ daalo (khali = skip):',{inp:1,num:1,ok:'Save'});if(v===null)return;const c=parseFloat(v);upd(x,{ts:'',ld:S.date,...(isNaN(c)?{}:{cst:Math.round(c*100)})},'✅ Lag gaya — ab stock mein judega')},
+ tsr:b=>{const x=A.get(b.dataset.id);x&&upd(x,{ts:'ret',rd0:S.date},'↩ Wapas karne wali list mein gaya',1)},
+ tsb:b=>{const x=A.get(b.dataset.id);x&&upd(x,{ts:'bad',bd:S.date},'🗑 Kharab mein likh diya',1)},
+ tsd:async b=>{const s=b.dataset.s,L=[...A.values()].filter(x=>x.ts==='ret'&&x.status!=='cancelled'&&SIx(x).sup===s);if(!L.length)return;if(L.some(x=>lk(x.date)))return dn();const o=L.map(x=>({...x}));
+  try{await bulk(L.map(x=>({...x,ts:'retd',rd:S.date})));render();toast('✔ '+s+': wapas kar diya',async()=>{try{await bulk(o);render()}catch(e){}})}catch(e){toast('Fail: '+e.message)}},
+ tsw:async b=>{const s=b.dataset.s,L=[...A.values()].filter(x=>x.ts==='ret'&&x.status!=='cancelled'&&SIx(x).sup===s);if(!L.length)return;S.sph=S.sph||{};let p=S.sph[s];
+  if(!p){p=await ask(s+' ka WhatsApp number (10 digit):',{inp:1,num:1,ok:'Save'});if(!p)return;p=p.replace(/\D/g,'').slice(-10);if(p.length!==10)return toast('Number galat hai');S.sph[s]=p;sv()}
+  const li=L.map(x=>{const z=SIx(x);return '• '+(z.items.length?z.items.map(i=>i.n+(i.q>1?' ×'+i.q:'')).join(', '):x.raw)}).join('\n');
+  open('https://wa.me/91'+p+'?text='+encodeURIComponent(`Namaste ${s} ji, ${S.shop} se. Ye saman wapas bhej raha hoon:\n${li}\nDhanyavaad 🙏`),'_blank')}});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),lk=d=>!!(S.lock||{})[d];
+//<pw
+// Agar text mein sirf ek ₹ wala number hai (jaise "Realme 5 display 1200₹"), wahi amount hai; baaki numbers model/ginti maane jayenge.
+const KW=/^(?:udhaar|udhar|baki|baaki|due|din|days?|mahin[ae]|months?|sims?|pieces?|pcs?|nos|box|sets?)\b/i,_pp=W.parse;
+W.parse=raw=>{const ms=[...raw.matchAll(/(\d+(?:\.\d+)?)\s*₹|₹\s*(\d+(?:\.\d+)?)/g)];if(ms.length!==1)return _pp(raw);
+ const m=ms[0],amt=m[1]||m[2],rest=raw.replace(m[0],' ');
+ const masked=rest.replace(/(?<![A-Za-z\d.\/])(\d+(?:\.\d+)?)(?![A-Za-z\d\/])/g,(n,d,off)=>{const after=rest.slice(off+n.length).trim(),before=rest.slice(Math.max(0,off-14),off);
+  return KW.test(after)||/(?:due|tak|wapas|warranty|cost|lagat|kharid|diya|paid|advance|adv|shop)\s*$/i.test(before)?n:'n'+n});
+ return _pp(masked.trim()+' '+amt)};
+//pw>
+// "Dhyan do" list mein: jis note mein ₹ amount hai, uske neeche ek tap mein sahi sale banao
+function fx(){document.querySelectorAll('#un .r[data-id]').forEach(r=>{const x=A.get(r.dataset.id);if(!x||x.kind!=='note'||!/₹/.test(x.raw)||r.querySelector('[data-a=nfx]'))return;const p=parse(x.raw);if(p.amt==null)return;
+ r.insertAdjacentHTML('beforeend',`<div class="pb"><button data-a="nfx" data-id="${x.id}">✔ ${R(p.amt)} ki ${KL[p.kind]} banao</button></div>`)})}
+const _r=W.render;W.render=()=>{_r();try{fx()}catch(e){console.error(e)}};
+act.nfx=async b=>{const x=A.get(b.dataset.id);if(!x)return;if(lk(x.date))return toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.');const p=parse(x.raw);if(p.amt==null)return;
+ try{await put({...x,kind:p.kind,cat:p.cat,amt:p.amt,out:p.out,status:p.status,method:x.method||p.method,shop:x.shop||p.shop},'edit',x);render();toast('✔ '+R(p.amt)+' ki '+KL[p.kind]+' ban gayi')}catch(e){toast('Fail: '+e.message)}};
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),LK=()=>S.lock||(S.lock={}),lk=d=>!!LK()[d],TD=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'}),dn=()=>toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.'),DEMO=/[?&]demo=1/.test(location.search);
+//<p6
+// ---------- Parser: Rs/rupees, phone model numbers, "udhaar 50", "cash 500 upi 200" ----------
+const BR=/\b(realme|redmi|mi|samsung|oppo|vivo|infinix|tecno|itel|nokia|poco|lava|moto|iphone|galaxy|narzo|spark|hot|camon|honor|oneplus|pova)\s+(\d{1,3})\b/gi;
+function pre(raw){let s=raw.replace(/(?:\b(?:rs\.?|rupees?|rupaye|rupay)\s*(\d+(?:\.\d+)?)|(\d+(?:\.\d+)?)\s*(?:rs\.?|rupees?|rupaye|rupay)(?![A-Za-z]))/gi,(m,a,b)=>(a||b)+'₹').replace(/(रुपये|रुपए)/g,'₹');
+ return s.replace(BR,(m,b,n)=>b+' n'+n).replace(/\b(udhaar|udhar|baki|baaki)\s*(\d+)(?![\/\d-])/gi,'$2 $1')}
+const PAYRE=/\b(cash|upi|gpay|phonepe|paytm)\s*(\d{2,})(?!\s*(?:piece|pieces|pcs?|set|sets|nos|box))\b/gi;
+const _pp=W.parse;
+W.parse=raw=>{const pays=[],rest=pre(raw).replace(PAYRE,(m,k,n)=>{pays.push({m:/cash/i.test(k)?'cash':'upi',a:Math.round(+n*100)});return' '}),r=_pp(rest);
+ if(pays.length&&r.amt!=null){const t=pays.reduce((a,p)=>a+p.a,0);if(t<=r.amt){r.pays=pays;r.paid=t;r.out=r.amt-t;r.method=pays[0].m}else{r.amt=null;r.kind='note';r.cat='Note'}}return r};
+// kya amount pakka nahi laga? (note ban ke chupke se na kho jaye)
+const unc=(v,p)=>p.amt==null&&p.kind==='note'&&/(?<![A-Za-z\d.\/₹])\d{2,}(?![A-Za-z\d\/])/.test(pre(v).replace(/\bshop\s*[12]\b/ig,' ').replace(/\d+\s*(?:piece|pieces|pcs?|set|sets|nos|box)\b/ig,' ').replace(/\bx\s*\d+\b/ig,' ').replace(/\d{1,2}[\/-]\d{1,2}(?:[\/-]\d{2,4})?/g,' '));
+//p6>
+function unitCost(n){const{SIx}=W._SM;let b=null;for(const x of A.values()){if(x.kind!=='stockin'||x.status==='cancelled')continue;const z=SIx(x);if(z.ret||z.kh==null||z.items.length!==1||z.items[0].n!==n)continue;if(!b||x.date+x.created>b.k)b={k:x.date+x.created,u:z.kh/z.items[0].q}}return b?b.u:null}
+const cands=raw=>{const ws=new Set(raw.toLowerCase().split(/[^\p{L}\d]+/u)),used=new Set(),o=[];for(const n of Object.keys(W._SM.stock3()).sort((a,b)=>b.length-a.length)){const tk=n.split(' ').filter(w=>w.length>1);if(tk.length&&tk.every(w=>ws.has(w)&&!used.has(w))){tk.forEach(w=>used.add(w));o.push(n)}}return o};
+// ---------- Quick Entry: pakka nahi to form, payment/stock link ----------
+const _q=W.qs;
+W.qs=async()=>{const v=q.value.trim();if(!v||busy||Q('#sg button.p').dataset.a!=='md:sale')return _q();const p=parse(v);
+ if(unc(v,p)){const x=mk({raw:v,kind:'sale',cat:p.cat==='Note'?'Other':p.cat,amt:null,out:null,method:p.method,shop:p.shop,status:'ok'});q.value='';localStorage.d='';openEd(x);toast('Amount pakka nahi laga — form mein sahi amount bharo');return}
+ let sk=null;
+ if(p.amt!=null&&p.kind==='sale'){const c=cands(v);if(c.length){const qm=v.match(/\bx\s*(\d+)\b/i),qn=qm&&+qm[1]<=50?+qm[1]:1,st=W._SM.stock3();
+   const pr=ask('Stock se ghatayein?\n'+c.map(n=>'• '+n+' ×'+qn+'  (Shop 1: '+st[n].sh['Shop 1']+', Shop 2: '+st[n].sh['Shop 2']+')').join('\n'),{ok:'Haan, ghatao'});Q('#cn').textContent='Nahi';const r=await pr;Q('#cn').textContent='Cancel';if(r)sk=c.map(n=>({n,q:qn,sh:p.shop||null}))}}
+ const t0=Date.now();await _q();const x=[...A.values()].filter(e=>e.kind==='sale'&&e.created>=t0&&e.raw===v).sort((a,b)=>b.created-a.created)[0];if(!x)return;const ch={};
+ if(p.pays){ch.pays=p.pays;ch.paid=p.paid;ch.out=p.out;ch.method=p.pays[0].m}else if(p.method&&p.status==='ok'&&x.paid==null){ch.paid=x.amt-(p.out||0);ch.method=p.method}
+ if(sk){ch.sk=sk;if(x.cost==null){let c=0;for(const l of sk){const u=unitCost(l.n);if(u==null){c=null;break}c+=u*l.q}if(c!=null)ch.cost=Math.round(c)}}
+ if(Object.keys(ch).length)try{await put({...x,...ch},'edit',x);render()}catch(e){toast('Fail: '+e.message)}};
+// ---------- Unverified entries: seedha confirm (naya entry nahi banta) ----------
+const _row=W.row;W.row=(x,d)=>{let h=_row(x,d);
+ if(x.kind==='sale'&&x.status==='unverified')h=h.replace(/<\/div>$/,`<div class="pb"><button data-a="cf" data-k="sale" data-id="${x.id}">✔ Sale confirm</button><button data-a="cf" data-k="cash" data-id="${x.id}">💵 Cash</button><button data-a="cf" data-k="upi" data-id="${x.id}">📲 UPI</button><button data-a="cf" data-k="udhaar" data-id="${x.id}">🧾 Udhaar</button><button data-a="edit" data-id="${x.id}">✏️ Edit</button></div></div>`);
+ if(x.pays&&x.pays.length)h=h.replace(/(class="bd">[^]*?)<\/div>/,(m,a)=>a+' • <i>'+x.pays.map(y=>(y.m==='cash'?'cash ':'UPI ')+R(y.a)).join(' + ')+'</i></div>');return h};
+// ---------- History / Undo, Data check, Auto backups ----------
+document.body.insertAdjacentHTML('beforeend','<dialog id="hd"><div class="fm"><h2>🕘 Entry history</h2><small>Kisne kab kya badla / delete kiya. "Pehle jaisa karo" se purani halat wapas aati hai.</small><div id="hl2" style="max-height:58vh;overflow:auto"></div><button data-a="hx">Band</button></div></dialog>');
+Q('#v-more .tg2').insertAdjacentHTML('beforeend','<button data-a="hist">🕘 History / Undo</button>');
+Q('#hl').insertAdjacentHTML('beforebegin','<h2>🛡️ Data safety</h2><button data-a="chk">🔎 Data check</button><div id="snl"></div>');
+if(DEMO)Q('header h1').insertAdjacentHTML('afterend','<div class="lkb">🧪 DEMO MODE — yahan ka data asli nahi hai, alag database hai</div>');
+let HL=[];
+const kvall=()=>new Promise(r=>{const g=db.transaction('kv').objectStore('kv').getAll();g.onsuccess=()=>r(g.result);g.onerror=()=>r([])});
+async function snap(){const d=TD();if(!A.size||await kvg('snap:'+d))return;await kvs('snap:'+d,{t:Date.now(),n:A.size,tx:[...A.values()]});
+ for(const k of (await kvall()).filter(e=>e.k.startsWith('snap:')).map(e=>e.k).sort().reverse().slice(7))await new Promise(r=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=r;t.onerror=r})}
+async function snl(){const L=(await kvall()).filter(e=>e.k.startsWith('snap:')).sort((a,b)=>b.k.localeCompare(a.k));
+ Q('#snl').innerHTML=L.length?'<small>Auto backup (har din pehli baar kholne par, pichle 7 din):</small>'+L.map(e=>`<div class="r"><b>${fd(e.k.slice(5))}</b> • ${e.v.n} entries • ${Math.round(JSON.stringify(e.v.tx).length/1024)} KB<div class="pb"><button data-a="snm" data-k="${e.k}">♻ Merge restore</button><button data-a="snd" data-k="${e.k}">⬇ Download</button></div></div>`).join(''):'<small>Abhi koi auto backup nahi (kal se banega).</small>'}
+const _r=W.render;W.render=()=>{_r();try{Q('#ol').textContent=(navigator.onLine?'online':'offline')+' • LOCAL ONLY';if(!W._sn){W._sn=1;setTimeout(()=>snap().catch(()=>{}),5000)}if(!Q('#v-set').classList.contains('hid'))snl()}catch(e){console.error(e)}};
+if('serviceWorker'in navigator&&navigator.serviceWorker.controller)navigator.serviceWorker.addEventListener('controllerchange',()=>toast('🔄 App ka naya version aa gaya — app band karke dobara kholo'));
+W._V6={unc,pre,unitCost};
+Object.assign(act,{qs:W.qs,
+ cf:async b=>{const x=A.get(b.dataset.id),k=b.dataset.k;if(!x)return;if(lk(x.date))return dn();const ch={status:'ok'};if(k==='cash'||k==='upi'){ch.method=k;ch.paid=x.amt-(x.out||0)}if(k==='udhaar'){ch.out=x.amt;ch.paid=0}
+  try{await put({...x,...ch},'edit',x);render();toast('✔ Confirm ho gaya')}catch(e){toast('Fail: '+e.message)}},
+ hx:()=>Q('#hd').close(),
+ hist:async()=>{HL=await new Promise(r=>{const g=db.transaction('log').objectStore('log').getAll();g.onsuccess=()=>r(g.result);g.onerror=()=>r([])});HL.sort((a,b)=>b.t-a.t);
+  Q('#hl2').innerHTML=HL.slice(0,60).map(l=>{const x=l.before||A.get(l.tid);return `<div class="r"><small>${new Date(l.t).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} • ${esc(l.act)}</small><div>${esc(x?x.raw:'(entry nahi mili)')}</div>${l.before&&['edit','delete','undo-delete'].includes(l.act)?`<div class="pb"><button data-a="hu" data-id="${l.id}">↩ Pehle jaisa karo</button></div>`:''}</div>`}).join('')||'<p class="mu">Abhi koi history nahi.</p>';Q('#hd').showModal()},
+ hu:async b=>{const l=HL.find(e=>e.id===b.dataset.id);if(!l||!l.before)return;if(lk(l.before.date))return dn();if(!await ask('Is entry ko pehle jaisa kar dein?\n'+l.before.raw,{ok:'Haan'}))return;try{await put(l.before,'restore',A.get(l.before.id)||null);render();toast('↩ Wapas ho gaya');act.hist()}catch(e){toast('Fail: '+e.message)}},
+ snm:async b=>{const v=await kvg(b.dataset.k);if(!v)return;const nw=v.tx.filter(x=>x&&x.id&&x.date&&!A.has(x.id));if(!await ask(`Auto backup ${fd(b.dataset.k.slice(5))}: ${v.n} entries, naye ${nw.length}.\nMerge karein? (purana kuch delete/overwrite nahi hoga)`,{ok:'Merge'}))return;try{await bulk(nw);render();toast(nw.length+' entries wapas judi')}catch(e){toast('Fail: '+e.message)}},
+ snd:async b=>{const v=await kvg(b.dataset.k);if(v)dl('auto-backup-'+b.dataset.k.slice(5)+'.json',JSON.stringify({app:'smp',v:1,exported:new Date(v.t).toISOString(),tx:v.tx}),'application/json')},
+ chk:async()=>{const L=[...A.values()],bad=[],dup=[],seen={},K=new Set(Object.keys(KL)),isD=d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&!isNaN(new Date(d));
+  for(const x of L){const e=[];if(!x.id||!x.raw)e.push('text khali');if(!isD(x.date))e.push('date galat');if(!K.has(x.kind))e.push('type anjaan');for(const f of['amt','out','paid','cost'])if(x[f]!=null&&(typeof x[f]!=='number'||!isFinite(x[f])||x[f]<0))e.push(f+' galat');if(x.amt!=null&&x.out!=null&&x.out>x.amt)e.push('baaki > total');if(x.amt!=null&&x.paid!=null&&x.paid>x.amt)e.push('mila > total');
+   if(e.length)bad.push('• '+String(x.raw||'').slice(0,28)+': '+e.join(', '));const k=x.date+'|'+x.kind+'|'+String(x.raw||'').trim().toLowerCase()+'|'+x.amt;if(seen[k]&&Math.abs(seen[k]-x.created)<12e4)dup.push('• '+fd(isD(x.date)?x.date:'1970-01-01')+' '+String(x.raw).slice(0,30));seen[k]=x.created}
+  await ask(`Data check: ${L.length} entries\n${bad.length?bad.length+' mein dikkat:\n'+bad.slice(0,8).join('\n'):'Koi galti nahi mili ✔'}\n\n${dup.length?'Shayad duplicate ('+dup.length+'):\n'+dup.slice(0,6).join('\n'):'Duplicate nahi mile ✔'}\n\n(Kuch bhi apne aap badla nahi gaya.)`,{ok:'OK'})}});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),TD=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'});
+document.head.insertAdjacentHTML('beforeend','<style>#pl:empty::before{content:"Abhi koi alert nahi ✔";color:var(--mu);font-size:14px}nav button{position:relative}.bdg{position:absolute;top:4px;right:22%;background:#d33;color:#fff;border-radius:99px;font-size:10px;line-height:1;padding:3px 6px;font-weight:700}</style>');
+// Home se hatao: Kaam / Kam stock / Jobs / Lena hai / Try wale pills ab "Aur" page ke upar "🔔 Dhyan do" mein
+Q('#v-more h2').insertAdjacentHTML('beforebegin','<h2>🔔 Dhyan do</h2>');
+Q('#v-more h2').after(Q('#pl'));
+// "Aur" button par laal ginti (sirf kaam ke alerts, jaankari wale pills nahi)
+const _r=W.render;W.render=()=>{_r();try{const n=[...document.querySelectorAll('#pl button')].filter(b=>!/^(📦|🔒)/.test(b.textContent)).length,b=Q('nav [data-a="v:more"]');let s=b.querySelector('.bdg');
+ if(n){if(!s){b.insertAdjacentHTML('beforeend','<span class="bdg"></span>');s=b.querySelector('.bdg')}s.textContent=n}else if(s)s.remove()}catch(e){console.error(e)}};
+// App raat bhar khuli rahe to naye din par apne aap aaj ki date (jab tak aapne khud purani date nahi kholi)
+let AUTO=TD();const roll=()=>{const t=TD();if(t!==AUTO){if(S.date===AUTO){S.date=t;render()}AUTO=t}};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)roll()});setInterval(roll,6e4);
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),TD=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'}),dOf=t=>new Date(t).toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'}),tm=t=>new Date(t).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}),dur=ms=>{const m=Math.max(0,Math.round(ms/6e4));return Math.floor(m/60)+'h '+m%60+'m'};
+//<rm
+const hm=s=>{const m=String(s||'').trim().match(/^(\d{1,2}):(\d{2})$/);return m&&+m[1]<24&&+m[2]<60?+m[1]*60+ +m[2]:null};
+const shouldRemind=(r,d,so,mins,now,hasAct)=>{const t=hm(r&&r.t);if(!r||!r.on||t==null||(r.done||{})[d]||(so&&so.off)||!(hasAct||(so&&so.on)))return false;return mins>=t&&now>=(r.snz||0)};
+//rm>
+const RM=()=>S.rem||(S.rem={on:true,t:'20:00',done:{},snz:0}),SO=()=>S.so||(S.so={});
+document.head.insertAdjacentHTML('beforeend','<style>.sw{width:66px;height:36px;border-radius:99px;position:relative;padding:0;border:0;background:#c9d1d6;flex:none;transition:background .2s}.sw .kn{position:absolute;top:3px;left:3px;width:30px;height:30px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:left .22s}.sw.on{background:var(--ac)}.sw.on .kn{left:33px}</style>');
+Q('#bk').insertAdjacentHTML('beforebegin','<div id="sob" class="r" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><b id="sot">🔴 Shop OFF</b><br><small id="sos"></small></div><button id="sosw" class="sw" data-a="so" role="switch" aria-label="Shop ON / OFF"><span class="kn"></span></button></div>');
+document.body.insertAdjacentHTML('beforeend','<dialog id="cld"><div class="fm"><h2>🌙 Aaj ki list</h2><small id="clh"></small><div id="clb" style="max-height:52vh;overflow:auto"></div><div class="f2"><button data-a="clr">📋 Aaj ka Hisaab</button><button data-a="cls">📤 Backup bhejo</button></div><button class="p" data-a="clo">🔴 Shop OFF karo</button><button data-a="clx">Baad mein</button></div></dialog>');
+Q('#hl').insertAdjacentHTML('beforebegin','<button data-a="rms"></button>');
+// ---------- Shaam ki list: kya baaki hai ----------
+function items(){const L=day(),m=sum(L),all=[...A.values()].filter(x=>x.status!=='cancelled'),t=TD(),I=[],
+ uv=L.filter(x=>x.kind==='sale'&&x.status==='unverified').length,pu=L.filter(x=>x.kind==='sale'&&x.status==='ok'&&x.paid==null&&!(S.assume&&x.out==null)&&x.amt-(x.out||0)>0).length,nt=L.filter(x=>x.kind==='note').length,
+ tr=all.filter(x=>x.kind==='stockin'&&x.ts==='try').length,rt=all.filter(x=>x.kind==='stockin'&&x.ts==='ret').length,jr=all.filter(x=>x.kind==='job'&&x.js==='ready').length,jo=all.filter(x=>x.kind==='job'&&x.js!=='done'&&x.due&&x.due<t).length,
+ du=document.querySelectorAll('#dq .r').length,fx=document.querySelectorAll('#fx .r').length,low=Object.values(W._SM.stock3()).filter(i=>i.q<=i.m).map(i=>i.n),bkOk=!!S.lb&&dOf(S.lb)===t;
+ const add=(bad,ok,no,go)=>I.push({bad,t:bad?no:ok,go});
+ add(uv>0,'Koi unverified sale nahi',uv+' sale unverified — confirm karo','v:home');add(pu>0,'Sabhi payment confirm hain',pu+' sale ka payment confirm nahi','v:home');add(nt>0,'Koi bina-amount note nahi',nt+' note bina amount ke','v:home');
+ add(tr>0,'Koi try baaki nahi',tr+' saman try mein — laga/return decide karo','trypg');add(rt>0,'Wapas karne ko kuch nahi',rt+' saman wapas karna hai','trypg');
+ add(jr>0,'Koi ready phone pada nahi',jr+' repair phone ready hai — customer ko bataya?','v:more');add(jo>0,'Koi repair job late nahi',jo+' repair job der se','v:more');
+ add(du>0,'Aaj kisi se paisa lena nahi',du+' se paisa lena hai','v:khata');add(fx>0,'Fixed kharcha sab likha hai',fx+' fixed kharcha baaki','v:more');
+ add(low.length>0,'Stock kam nahi',low.length+' item kam: '+low.slice(0,4).join(', '),'v:stock');add(!bkOk,'Backup aaj ka le liya',S.lb?'Aaj ka backup nahi liya':'Backup abhi tak nahi liya','bsh');
+ return{I,m,n:L.length}}
+function cld(){const{I,m,n}=items(),bad=I.filter(i=>i.bad).length;
+ Q('#clh').textContent=bad?bad+' cheezein baaki hain':'Sab taiyar hai ✅';
+ Q('#clb').innerHTML=`<div class="r k-sale"><b>${R(m.sales)}</b> bikri • 💵 ${R(m.cash)} • 📲 ${R(m.upi)} • 🧾 kharcha ${R(m.exp)} • ${n} entries</div>`+I.map(i=>`<div class="r ${i.bad?'k-task':'k-sale'}" style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>${i.bad?'⚠':'✅'} ${esc(i.t)}</span>${i.bad&&i.go?`<button data-a="clg" data-g="${i.go}" style="min-height:34px;padding:2px 12px">Dekho</button>`:''}</div>`).join('')}
+const openCl=()=>{cld();Q('#cld').showModal()};
+// ---------- Home par switch ----------
+function sob(){const d=TD(),so=SO()[d]||{},on=!!so.on&&!so.off;Q('#sob').classList.toggle('hid',S.date!==d);Q('#sosw').classList.toggle('on',on);Q('#sosw').setAttribute('aria-checked',on);
+ Q('#sot').textContent=on?'🟢 Shop ON':'🔴 Shop OFF';Q('#sos').textContent=on?tm(so.on)+' se khula • '+dur(Date.now()-so.on):(so.off&&so.on?'Band: '+tm(so.off)+' • '+dur(so.off-so.on)+' khula raha':so.off?'Band: '+tm(so.off):'Aaj abhi khula nahi');
+ const r=RM();Q('[data-a=rms]').textContent='🔔 Shaam ka reminder: '+(r.on?r.t:'band')}
+const _r=W.render;W.render=()=>{_r();try{sob()}catch(e){console.error(e)}};
+// ---------- Reminder (app khuli ho tab) ----------
+let rb=0;
+async function chkRem(){const d=TD(),r=RM();if(rb||document.hidden||S.date!==d||Q('dialog[open]'))return;const nw=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Kolkata'})),mins=nw.getHours()*60+nw.getMinutes();
+ if(!shouldRemind(r,d,SO()[d],mins,Date.now(),day().length>0))return;rb=1;r.snz=Date.now()+30*6e4;sv();
+ const pr=ask('🌙 Shaam ho gayi ('+r.t+')\nAaj ki puri list taiyar karein aur Shop OFF karein?',{ok:'📋 Haan, list dekho'});Q('#cn').textContent='Baad mein (30 min)';const ok=await pr;Q('#cn').textContent='Cancel';rb=0;if(ok)openCl()}
+setInterval(()=>{try{sob();chkRem()}catch(e){}},6e4);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(chkRem,800)});setTimeout(chkRem,3000);
+// owner-only report panel mein khula/band time
+const _rt=W.repText;W.repText=()=>{const t=_rt(),so=SO()[S.date];if(so&&so.on)Q('#ro').innerHTML+='<br>🕒 Shop: '+tm(so.on)+' se '+(so.off?tm(so.off)+' tak ('+dur(so.off-so.on)+')':'abhi khula');return t};
+W._V8={shouldRemind,hm,items};
+Object.assign(act,{
+ so:async()=>{const d=TD(),so=SO()[d]||{};if(so.on&&!so.off){openCl();return}
+  SO()[d]={on:so.on||Date.now()};const ks=Object.keys(S.so).sort();for(const k of ks.slice(0,Math.max(0,ks.length-90)))delete S.so[k];await sv();render();
+  const v=await ask('🟢 Shop ON ✅\nDrawer mein abhi kitna cash hai? (Opening cash, khali = skip)',{inp:1,num:1,ok:'Save'});if(v!==null&&v.trim()!==''&&!isNaN(parseFloat(v))){(S.op=S.op||{})[d]=Math.round(parseFloat(v)*100);await sv();toast('Opening cash save ✓')}},
+ clg:b=>{const g=b.dataset.g;Q('#cld').close();if(g.startsWith('v:'))setv(g.slice(2));else if(g==='trypg')act.trypg();else if(g==='bsh')act.bsh()},
+ clr:()=>{Q('#cld').close();act.rep()},cls:()=>{Q('#cld').close();act.bsh()},clx:()=>Q('#cld').close(),
+ clo:async()=>{const d=TD();SO()[d]=Object.assign(SO()[d]||{},{off:Date.now()});RM().done[d]=1;await sv();Q('#cld').close();render();toast('🔴 Shop OFF — aaj ki list taiyar. Din band karna ho to Aur page se.')},
+ rms:async()=>{const r=RM(),v=await ask('Shaam ke reminder ka time (24 ghante, jaise 20:30)\nKhali chhodo = reminder band\n\nDhyan: reminder tabhi aata hai jab app khuli ho.',{inp:1,val:r.on?r.t:'',ok:'Save'});if(v===null)return;const s=v.trim();if(s===''){r.on=false}else if(hm(s)==null){return toast('Time galat hai. Aise likho: 20:30')}else{r.on=true;r.t=s.replace(/^(\d):/,'0$1:')}r.snz=0;await sv();render()}});
+})();
+
+</script><script>
+(()=>{const W=window,Q=s=>document.querySelector(s),QA=s=>[...document.querySelectorAll(s)],{SIx}=W._SM;
+document.head.insertAdjacentHTML('beforeend','<style>body{padding-bottom:calc(96px + env(safe-area-inset-bottom))}header{padding:6px 10px}header h1{margin:0 0 4px}#q::placeholder{font-size:14px;opacity:.65}#tryb{width:auto!important;min-height:34px;font-size:13px;padding:2px 14px;border-radius:99px}.tc{display:inline-block;background:var(--bg);border:1px solid var(--bd);border-radius:99px;padding:2px 10px;margin:4px 4px 0 0;font-size:13px}.mt{margin-top:4px;color:var(--ac)}#ssq,#stq{width:100%;margin:6px 0}</style>');
+Q('#rc').insertAdjacentHTML('afterend','<div id="sc2" class="ch hid"></div>');
+document.body.insertAdjacentHTML('beforeend','<datalist id="qd2"></datalist>');
+Q('#kh').insertAdjacentHTML('beforebegin','<div id="ks"></div>');
+const CATS=[['🔋 Battery',/batter|^b[nl]\s?\d/],['📱 Folder',/folder/],['🛡 Glass',/glass/],['👕 Cover/Panel',/cover|panel/],['🔌 Charger/Cable',/charg|cable|png|pin\b|adapter|\bv8\b/],['📺 Display',/display|lcd|ptta|screen/],['🧩 Board/Key',/board|key|jack|mic|speaker/]];
+const cat=n=>{for(const[l,r]of CATS)if(r.test(n))return l;return '📦 Aur'};
+let SQ='',TQ='',SU={};
+// 1) Home: mode ke hisaab se saaf screen (Saman aaya mein supplier chips, sale chips chhupe)
+function modeUI(){const b=Q('#sg button.p'),m=b?b.dataset.a.slice(3):'sale';
+ ['#ch','#rc'].forEach(s=>Q(s).classList.toggle('hid',m!=='sale'));Q('#sc2').classList.toggle('hid',m!=='in');
+ q.setAttribute('list',m==='sale'?'qd':'qd2');
+ q.placeholder={sale:'Likho: Battery sell 180',in:'Hyderabad: BN5Q battery + glass',job:'Samsung A12 screen 500 adv 200 @Rahul'}[m]||'';
+ const t=Q('#tryb');if(t)t.textContent='🧪 Try: '+(localStorage.tryon==='1'?'ON ✓':'OFF');
+ const c={};for(const x of A.values())if(x.kind==='stockin'){const s=SIx(x).sup;if(s!=='Naam nahi')c[s]=(c[s]||0)+1}
+ const L=Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,8);
+ 
+ Q('#qd2').innerHTML=L.map(([s])=>`<option value="${esc(s)}: ">`).join('')}
+document.addEventListener('click',e=>{if(e.target.closest('[data-a^="md:"]'))setTimeout(modeUI,20)});
+// 2) Saman > Dukan ke hisaab se: category chips + item search
+function supV(){const el=Q('#v-saman');if(el.classList.contains('hid')||el.dataset.m!=='sup')return;
+ const T={};for(const x of A.values()){if(x.kind!=='stockin'||x.status==='cancelled')continue;const z=SIx(x),e=T[z.sup]||(T[z.sup]={n:0,last:x.date,p:0,c:{},kh:0,it:{}});e.n++;if(x.date>e.last)e.last=x.date;e.kh+=z.kh||0;
+  if(!z.ret)for(const i of z.items){const k=cat(i.n);e.c[k]=(e.c[k]||0)+i.q;e.p+=i.q;e.it[i.n]=(e.it[i.n]||0)+i.q}}
+ SU=T;const f=el.querySelector('.f2'),h=el.querySelector('h2');
+ el.innerHTML=(h?h.outerHTML:'')+(f?f.outerHTML:'')+`<input id="ssq" value="${esc(SQ)}" placeholder="🔍 Dukan ya item khojo (y12 folder, battery...)">`+
+ (Object.entries(T).sort((a,b)=>b[1].n-a[1].n).map(([s,e])=>{const top=Object.entries(e.it).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([n,q])=>esc(n)+' ×'+q).join(' • ');
+  return `<div class="r k-repay sc" data-a="sdt" data-s="${esc(s)}" data-k="${esc((s+' '+Object.keys(e.it).join(' ')).toLowerCase())}" style="cursor:pointer"><b>🏪 ${esc(s)} ›</b> <small>— ${e.n} baar • ${e.p} piece • aakhri ${fd(e.last)}</small>${e.kh?'<br><small>kharid '+R(e.kh)+'</small>':''}<div>${Object.entries(e.c).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span class="tc">${k} ×${v}</span>`).join('')}</div>${top?'<small>Sabse zyada: '+top+'</small>':''}</div>`}).join('')||'<p class="mu">Abhi koi saman nahi.</p>');flt()}
+function flt(){const t=SQ.trim().toLowerCase();QA('#v-saman .sc').forEach(c=>{const hit=!t||c.dataset.k.includes(t);c.classList.toggle('hid',!hit);const m=c.querySelector('.mt');if(m)m.remove();
+ if(t&&hit&&SU[c.dataset.s]){const l=Object.entries(SU[c.dataset.s].it).filter(e=>e[0].includes(t)).map(e=>esc(e[0])+' ×'+e[1]).join(', ');if(l)c.insertAdjacentHTML('beforeend','<div class="mt"><small>✅ '+l+'</small></div>')}})}
+// 3) Stock search
+function stf(){const t=TQ.trim().toLowerCase();QA('#v-stock .r').forEach(r=>r.classList.toggle('hid',!!t&&!r.textContent.toLowerCase().includes(t)))}
+function stV(){const el=Q('#v-stock');if(el.classList.contains('hid'))return;const b=el.querySelector('[data-a="si3"]');
+ if(b&&!Q('#stq'))b.insertAdjacentHTML('afterend','<input id="stq" placeholder="🔍 Stock mein khojo (y12 folder, battery...)">');if(Q('#stq')){Q('#stq').value=TQ;stf()}}
+document.addEventListener('input',e=>{if(e.target.id==='ssq'){SQ=e.target.value;flt()}else if(e.target.id==='stq'){TQ=e.target.value;stf()}});
+// 4) Backup banner (din ginti + WhatsApp/Drive share) aur Udhaar total
+function ext2(){const b=Q('#bk');if(!b.classList.contains('hid')){const d=S.lb?Math.floor((Date.now()-S.lb)/864e5):null;Q('#bk small').textContent=d==null?'Abhi tak backup nahi liya.':d+' din se backup nahi liya.';const bt=Q('#bk button');bt.dataset.a='bsh';bt.textContent='📤 Backup bhejo'}
+ const o=Object.values(owed()).filter(v=>v>0);Q('#ks').innerHTML=o.length?`<div class="r k-task">💰 Kul lena hai: <b>${R(o.reduce((a,v)=>a+v,0))}</b> <small>• ${o.length} log</small></div>`:''}
+// 5) Naye hisse ki actions + app icon shortcuts (?m=in / ?m=job / ?v=khata)
+const _t=act.trytog;Object.assign(act,{trytog:()=>{_t();modeUI()},sup2:b=>{q.value=b.dataset.s+': ';q.oninput();q.focus()}});
+const _r=W.render;W.render=()=>{_r();try{modeUI();supV();stV();ext2();
+ if(!W._pq){W._pq=1;const u=new URLSearchParams(location.search),m=u.get('m'),v=u.get('v'),mb=m&&Q('[data-a="md:'+m+'"]');if(mb)mb.click();if(v&&Q('#v-'+v))setv(v)}}catch(e){console.error(e)}};
+})();
+</script>
+<script>
+(()=>{const W=window,Q=s=>document.querySelector(s),{SIx,supOf2}=W._SM;
+Q('#sc2').insertAdjacentHTML('afterend','<div id="sc3" class="ch hid"></div>');
+const FAV=()=>S.fav&&S.fav.length?S.fav:['Hyderabad','Mobile Bajar','Bablu','Munna','Rivera','Himanshu'];
+const inM=()=>{const b=Q('#sg button.p');return b&&b.dataset.a==='md:in'};
+function favUI(){Q('#sc2').innerHTML=FAV().map(s=>`<button data-a="sup2" data-s="${esc(s)}">🏪 ${esc(s)}</button>`).join('')+'<button data-a="favs">✏️ List</button>';if(!inM()){Q('#sc3').classList.add('hid');return}itm()}
+function itm(){const el=Q('#sc3'),v=q.value.trim();if(!inM()||!v){el.classList.add('hid');return}
+ const s=supOf2(v).sup,fr={};let last=null;
+ for(const x of A.values()){if(x.kind!=='stockin'||x.status==='cancelled')continue;const z=SIx(x);if(z.sup!==s)continue;if(!last||x.created>last.created)last=x;if(!z.ret)for(const i of z.items)fr[i.n]=(fr[i.n]||0)+i.q}
+ const L=Object.entries(fr).sort((a,b)=>b[1]-a[1]).slice(0,10);
+ el.innerHTML=(last?`<button data-a="rep2" data-id="${last.id}">🔁 Pichhla saman</button>`:'')+L.map(([n])=>`<button data-a="itm2" data-n="${esc(n)}">+ ${esc(n)}</button>`).join('');
+ el.classList.toggle('hid',!L.length&&!last)}
+const _o=q.oninput;q.oninput=()=>{_o();try{itm()}catch(e){}};
+Object.assign(act,{
+ itm2:b=>{let v=q.value.replace(/\s+$/,'');v+=/[:+]$/.test(v)?' ':' + ';q.value=v+b.dataset.n;q.oninput();q.focus()},
+ rep2:b=>{const x=A.get(b.dataset.id);if(!x)return;q.value=x.raw;q.oninput();q.focus()},
+ favs:async()=>{const pr=ask('Apni regular dukaanon ke naam — har line mein ek (max 8).\nYe Home par Saman aaya mein chips bankar dikhengi.',{area:1,ok:'Save'});Q('#ct').value=FAV().join('\n');const v=await pr;if(v===null)return;
+  S.fav=v.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,8);await sv();render()}});
+const _r=W.render;W.render=()=>{_r();try{favUI()}catch(e){console.error(e)}};try{favUI()}catch(e){}
+})();
+</script>
+<script>
+(()=>{const W=window,Q=s=>document.querySelector(s);
+// 1) Item naam saaf: type word pehle, baaki sorted -> "y12 folder" = "folder y12" (raw text nahi badalta)
+const TY=new Set(['folder','battery','cover','glass','charge','display','board','panel','key','cable','pin','ptta','lcd']);
+W.nk=n=>{const t=String(n).toLowerCase().split(/\s+/).filter(Boolean);return t.filter(w=>TY.has(w)).sort().concat(t.filter(w=>!TY.has(w)).sort()).join(' ')};
+W.mgS=()=>{const o=S.stk||{};let ch=0;for(const k of Object.keys(o)){const n=nk(k);if(n===k)continue;const t=o[n]||(o[n]={m:o[k].m==null?2:o[k].m});t.b=(t.b||0)+(o[k].b||0);if(o[k].sb){t.sb=t.sb||{};for(const s in o[k].sb)t.sb[s]=(t.sb[s]||0)+o[k].sb[s]}delete o[k];ch=1}if(ch)sv();return o};
+Q('#v-more .tg2').insertAdjacentHTML('beforeend','<button data-a="smr">🏪 Dukan ka mahine ka report</button>');
+// 2) Dukan ka mahine ka report
+function smr(){const{SIx,canon}=W._SM,mo=S.date.slice(0,7),T={},g=s=>T[s]||(T[s]={n:0,p:0,k:0,d:0,mk:0,md:0,it:{}});
+ for(const x of A.values()){if(x.status==='cancelled')continue;
+  if(x.kind==='stockin'){const z=SIx(x),e=g(z.sup),m=x.date.startsWith(mo);e.k+=z.kh||0;e.d+=x.paid||0;
+   if(m){e.n++;e.mk+=z.kh||0;e.md+=x.paid||0;if(!z.ret)for(const i of z.items){e.p+=i.q;e.it[i.n]=(e.it[i.n]||0)+i.q}}}
+  else if(x.kind==='suppay'&&x.sup){const e=g(canon(x.sup));e.d+=x.amt||0;if(x.date.startsWith(mo))e.md+=x.amt||0}}
+ const nm=new Date(mo+'-01T12:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'}),ln='------------------------------',
+ L=Object.entries(T).filter(([s,e])=>e.n||e.k-e.d).sort((a,b)=>b[1].mk-a[1].mk||b[1].n-a[1].n);let tk=0,td=0,tb=0,tn=0,tp=0;
+ const B=L.map(([s,e])=>{tk+=e.mk;td+=e.md;tb+=e.k-e.d;tn+=e.n;tp+=e.p;const top=Object.entries(e.it).sort((a,b)=>b[1]-a[1]).slice(0,4).map(i=>i[0]+' ×'+i[1]).join(', ');
+  return `🏪 ${s}\nAaya: ${e.n} baar • ${e.p} piece\nKharid: ${e.mk?R(e.mk):'daam likha nahi'} • Diya: ${R(e.md)}\nDena baaki (sab din): ${R(e.k-e.d)}`+(top?'\nZyada: '+top:'')}).join('\n\n');
+ return `*${S.shop}*\nDukan ka Hisaab — ${nm}\n${ln}\n`+(B||'Is mahine koi saman nahi aaya.')+`\n${ln}\nKul: ${tn} baar • ${tp} piece • kharid ${R(tk)} • diya ${R(td)}\nKul dena baaki: ${R(tb)}\n(Kharid wahi judta hai jahan ₹ likha ho)`}
+// 3) Daam history: ek item kis dukan se kitne mein
+function dam(n){const{SIx}=W._SM,o={};for(const x of A.values()){if(x.kind!=='stockin'||x.status==='cancelled')continue;const z=SIx(x);if(z.ret||z.kh==null||z.items.length!==1||z.items[0].n!==n)continue;
+  const u=z.kh/z.items[0].q,e=o[z.sup]||(o[z.sup]={c:0,s:0,mn:1e15,k:'',l:0,d:''});e.c++;e.s+=u;if(u<e.mn)e.mn=u;if(x.date+x.created>e.k){e.k=x.date+x.created;e.l=u;e.d=x.date}}
+ const L=Object.entries(o).sort((a,b)=>a[1].l-b[1].l);if(!L.length)return '\nAbhi daam ki history nahi hai.\nEk entry mein ek hi item likho aur ₹ daalo, jaise:\n"Hyderabad: '+n+' x5 ₹450"';
+ return '\n'+L.map(([s,e],i)=>(i?'':'✅ ')+s+': abhi '+R(Math.round(e.l))+' ('+fd(e.d)+') • sabse kam '+R(Math.round(e.mn))+' • aam '+R(Math.round(e.s/e.c))+' ('+e.c+' baar)').join('\n')+(L.length>1?'\n\n✅ = abhi sabse sasta':'')+'\n(Daam per piece)'}
+Object.assign(act,{
+ smr:()=>{cur=null;Q('#rt').value=smr();Q('#ro').classList.add('hid');Q('#op').closest('label').classList.add('hid');Q('#dr').closest('label').classList.add('hid');const v=Q('[data-a=rv]');v.classList.add('hid');Q('#rd').addEventListener('close',()=>v.classList.remove('hid'),{once:true});Q('#rd').showModal()},
+ dm:b=>ask('💲 '+b.dataset.n+' — daam history'+dam(b.dataset.n),{ok:'OK'})});
+const _r=W.render;W.render=()=>{_r();try{document.querySelectorAll('#v-stock .r').forEach(r=>{const d=r.querySelector('[data-n]'),p=r.querySelector('.pb');if(d&&p&&!p.querySelector('[data-a=dm]'))p.insertAdjacentHTML('beforeend',`<button data-a="dm" data-n="${esc(d.dataset.n)}">💲 Daam</button>`)})}catch(e){console.error(e)}};
+})();
+</script>
+<script>
+(()=>{const W=window,Q=s=>document.querySelector(s),{SIx,canon}=W._SM;let LAST={};
+document.head.insertAdjacentHTML('beforeend','<style>#sc2{display:grid!important;grid-template-columns:repeat(3,1fr);gap:8px}#sc2.hid{display:none!important}#sc2 button{min-height:56px;text-align:left;line-height:1.25;padding:6px 10px;border-radius:14px;white-space:normal}#sc2 button small{display:block;font-weight:500;opacity:.8;font-size:11px}#sc2 button[data-a=favs]{min-height:36px;grid-column:1/-1;text-align:center}#sc3 button{min-height:40px}.sl{font-size:12px;opacity:.7;margin:6px 2px 0}</style>');
+Q('#sc2').insertAdjacentHTML('beforebegin','<div class="sl hid" id="sl2">Kahan se aaya?</div>');
+Q('#sc3').insertAdjacentHTML('beforebegin','<div class="sl hid" id="sl3"></div>');
+const inM=()=>{const b=Q('#sg button.p');return b&&b.dataset.a==='md:in'};
+function calc(){LAST={};for(const x of A.values()){if(x.kind!=='stockin'||x.status==='cancelled')continue;const s=SIx(x).sup;if(!LAST[s]||x.date>LAST[s])LAST[s]=x.date}
+ Q('#sc2').querySelectorAll('button[data-s]').forEach(b=>{const d=LAST[canon(b.dataset.s)];b.innerHTML=esc(b.dataset.s)+'<small>'+(d?'aakhri '+fd(d).slice(0,5):'abhi nahi aaya')+'</small>'})}
+function hl(){const on=inM();Q('#sl2').classList.toggle('hid',!on);if(!on){Q('#sl3').classList.add('hid');return}
+ const v=q.value,i=v.indexOf(':'),cur=i>0?canon(v.slice(0,i).trim()):'';
+ Q('#sc2').querySelectorAll('button[data-s]').forEach(b=>b.classList.toggle('p',!!cur&&canon(b.dataset.s)===cur));
+ const l=Q('#sl3'),h=Q('#sc3').classList.contains('hid');l.classList.toggle('hid',h||!cur);if(cur)l.textContent=cur+' ke aam items'}
+const _o=q.oninput;q.oninput=()=>{_o();try{hl()}catch(e){}};
+const _r=W.render;W.render=()=>{_r();try{calc();hl()}catch(e){console.error(e)}};
+})();
+</script>
+<script>
+(()=>{const W=window,Q=s=>document.querySelector(s),QA=s=>document.querySelectorAll(s),{SIx,canon}=W._SM;
+document.head.insertAdjacentHTML('beforeend','<style>.pyr{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}.pyr small{flex:1 1 100%}.pyr button{min-height:40px}.pyr .ok{color:#0b8a4a;font-weight:700}</style>');
+const lk=d=>!!(S.lock&&S.lock[d]),dt=t=>new Date(t).toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit'});
+// har dukan: kharid, diya, aur payment-done ke baad aaye naye saman ki ginti
+function pm(){const T={},pd=S.pd||{},g=s=>T[s]||(T[s]={k:0,d:0,n:0});
+ for(const x of A.values()){if(x.status==='cancelled')continue;
+  if(x.kind==='stockin'){const z=SIx(x),e=g(z.sup),p=pd[z.sup];e.k+=z.kh||0;e.d+=x.paid||0;if(!p||x.created>p.t)e.n++}
+  else if(x.kind==='suppay'&&x.sup)g(canon(x.sup)).d+=x.amt||0}
+ return T}
+function row(s,T){const e=T[s]||{k:0,d:0,n:0},p=(S.pd||{})[s],B=e.k-e.d;
+ if(!e.n&&p&&B<=0)return `<div class="pyr"><span class="ok">✅ Payment done • ${dt(p.t)}</span><button data-a="pdu" data-s="${esc(s)}">↩ Wapas baaki</button></div>`;
+ return `<div class="pyr"><small>💰 Payment baaki: ${e.n} saman entry${B>0?' • '+R(B):''}</small><button class="p" data-a="pdn" data-s="${esc(s)}">✅ Poora done</button><button data-a="sd" data-c="${esc(s)}">💵 Kuch diya</button></div>`}
+Object.assign(act,{
+ pdn:async b=>{const s=b.dataset.s;if(lk(S.date))return toast('🔒 Ye din band hai. Pehle "Din kholo" dabao.');
+  const e=pm()[s]||{k:0,d:0,n:0},B=Math.max(0,e.k-e.d);
+  if(!await ask(`${s} ka poora payment done karein?\nSaman entries: ${e.n} • Dena baaki (₹ wala): ${R(B)}`+(B?`\nIsse ${R(B)} ka "Supplier ko diya" ban jaayega.`:''),{ok:'Done'}))return;
+  const p={t:Date.now()};S.pd=S.pd||{};
+  try{if(B>0){const r=mk({raw:s+': supplier ko diya '+B/100+' (poora done)',kind:'suppay',cat:'Supplier payment',amt:B,out:null,method:'cash',shop:null,status:'ok'});r.sup=s;await put(r,'add');p.id=r.id}
+   S.pd[s]=p;await sv();render();toast('✅ '+s+' ka payment done')}catch(er){toast('Fail: '+er.message)}},
+ pdu:async b=>{const s=b.dataset.s,p=(S.pd||{})[s];if(!p)return;
+  if(!await ask(s+' ko wapas "payment baaki" karein?'+(p.id?'\nPoore-done wala "Supplier ko diya" bhi cancel ho jaayega.':''),{ok:'Wapas'}))return;
+  try{if(p.id){const x=A.get(p.id);if(x&&x.status!=='cancelled')await put({...x,status:'cancelled'},'cancel',x)}delete S.pd[s];await sv();render();toast('Wapas baaki kar diya')}catch(er){toast('Fail: '+er.message)}}});
+function inj(){const T=pm();
+ QA('#v-saman .sc[data-s]').forEach(c=>{if(!c.querySelector('.pyr'))c.insertAdjacentHTML('beforeend',row(c.dataset.s,T))});
+ QA('#sk2 [data-a=sd]').forEach(b=>{if(!b.parentElement.querySelector('[data-a=pdn]'))b.insertAdjacentHTML('beforebegin',`<button class="p" data-a="pdn" data-s="${esc(canon(b.dataset.c))}">✅ Poora done</button>`)});
+ QA('#sc2 button[data-s]').forEach(b=>{const e=T[canon(b.dataset.s)],m=b.querySelector('small');if(e&&m&&e.k-e.d>0&&!m.dataset.b){m.dataset.b=1;m.textContent+=' • '+R(e.k-e.d)+' baaki'}})}
+const _r=W.render;W.render=()=>{_r();try{inj()}catch(e){console.error(e)}};
+})();
+</script>
+<script>
+(()=>{const W=window,Q=s=>document.querySelector(s),QA=s=>document.querySelectorAll(s),z=n=>String(n).padStart(2,'0'),
+ymd=d=>d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate()),TD=()=>ymd(new Date()),pd=d=>new Date(d+'T12:00:00'),
+NM={P:'Present',A:'Absent',H:'Holiday',L:'Leave'},WD=['Su','Mo','Tu','We','Th','Fr','Sa'],
+MN=['January','February','March','April','May','June','July','August','September','October','November','December'],V={t:'cal',y:0,m:0,sh:null,dir:'',an:1};
+const D=()=>S.att||(S.att={d:{},w:[],s:'',g:0,last:null}),fmt=(d,o)=>pd(d).toLocaleDateString('en-IN',o),ft=t=>new Date(t).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+function st(d){const a=D(),r=a.d[d];if(r)return r.s;if(d>TD())return'F';if(a.s&&d<a.s)return'N';return a.w.includes(pd(d).getDay())?'W':'U'}
+function stats(y,m){const n=new Date(y,m+1,0).getDate(),c={P:0,A:0,H:0,L:0,U:0,W:0};for(let i=1;i<=n;i++){const k=st(y+'-'+z(m+1)+'-'+z(i));if(c[k]!=null)c[k]++}const wk=c.P+c.A+c.L+c.U;return{...c,wk,hol:c.H+c.W,pc:wk?c.P/wk*100:0}}
+function streak(){let s=0,d=new Date();for(let i=0;i<800;i++){const x=st(ymd(d));if(x==='P')s++;else if(!(x==='H'||x==='W'||(i===0&&x==='U')))break;d.setDate(d.getDate()-1)}return s}
+function best(){const o={};for(const k in D().d)if(D().d[k].s==='P'){const m=k.slice(0,7);o[m]=(o[m]||0)+1}const e=Object.entries(o).sort((a,b)=>b[1]-a[1])[0];return e?MN[+e[0].slice(5)-1]+' '+e[0].slice(0,4)+' • '+e[1]+' din':'abhi koi nahi'}
+const CSS=`#v-att{--hp:#6d28d9;padding-bottom:20px}
+#v-att .hz-hd{position:relative;overflow:hidden;background:linear-gradient(135deg,#5b21b6,#8b5cf6 55%,#c4b5fd);color:#fff;border-radius:26px;padding:18px;box-shadow:0 10px 26px rgba(91,33,182,.35)}
+#v-att .hz-bl{position:absolute;border-radius:50%;background:rgba(255,255,255,.16);animation:hzf 6s ease-in-out infinite}
+@keyframes hzf{50%{transform:translateY(-12px) scale(1.06)}}
+#v-att .hz-ic{display:inline-block;font-size:30px;animation:hzb 2.4s ease-in-out infinite}
+@keyframes hzb{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-3px)}}
+#v-att .hz-s3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;position:relative}
+#v-att .hz-s3 div{background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);border-radius:16px;padding:10px 4px;text-align:center;font-size:11px}
+#v-att .hz-s3 b{display:block;font-size:24px;line-height:1.1}
+#v-att .hz-big{display:block;width:100%;min-height:58px;margin-top:14px;border:0;border-radius:18px;font-size:18px;font-weight:800;color:#fff;background:linear-gradient(135deg,#15803d,#22c55e);box-shadow:0 8px 20px rgba(21,128,61,.4);animation:hzp 2s ease-in-out infinite}
+#v-att .hz-big.done{background:var(--cd);color:var(--tx);border:2px solid #15803d;animation:none;box-shadow:none}
+@keyframes hzp{50%{box-shadow:0 8px 30px rgba(34,197,94,.7);transform:scale(1.015)}}
+#v-att .hz-tb{display:flex;gap:4px;margin:14px 0 10px;padding:4px;background:var(--cd);border:1px solid var(--bd);border-radius:99px}
+#v-att .hz-tb button{flex:1;min-height:40px;border:0;border-radius:99px;background:none;color:var(--tx);font-weight:700;font-size:13px;transition:.2s}
+#v-att .hz-tb button.hz-on{background:linear-gradient(135deg,#6d28d9,#8b5cf6);color:#fff;box-shadow:0 4px 12px rgba(109,40,217,.35)}
+#v-att .hz-mn{display:flex;align-items:center;gap:6px;margin:6px 0 10px}
+#v-att .hz-mn b{flex:1;text-align:center;font-size:17px}
+#v-att .hz-mn button{min-width:44px;min-height:44px;border-radius:14px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);font-weight:700}
+#v-att .hz-cg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;animation:hzl .3s}
+#v-att .hz-cg.hz-r{animation-name:hzr}
+@keyframes hzl{from{opacity:0;transform:translateX(-18px)}}@keyframes hzr{from{opacity:0;transform:translateX(18px)}}
+#v-att .hz-cg i{text-align:center;font-size:11px;font-style:normal;font-weight:700;color:var(--mu)}
+#v-att .hz-d{position:relative;aspect-ratio:1;min-height:0;padding:0;border-radius:14px;border:1px solid var(--bd);font-weight:700;font-size:15px;background:var(--cd);color:var(--tx);transition:transform .15s}
+#v-att .hz-d:active,#v-att .hz-b:active,#v-att .hz-big:active{transform:scale(.9)}
+#v-att .hz-P{background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;border-color:transparent}#v-att .hz-P:after{content:"✓";position:absolute;right:4px;top:1px;font-size:9px}
+#v-att .hz-A{background:linear-gradient(135deg,#b91c1c,#ef4444);color:#fff;border-color:transparent}
+#v-att .hz-H,#v-att .hz-W{background:linear-gradient(135deg,#ca8a04,#facc15);color:#422006;border-color:transparent}#v-att .hz-W{opacity:.5}
+#v-att .hz-L{background:linear-gradient(135deg,#0369a1,#38bdf8);color:#fff;border-color:transparent}
+#v-att .hz-F,#v-att .hz-N{background:var(--bd);color:var(--mu);opacity:.75}
+#v-att .hz-t{outline:3px solid #8b5cf6;outline-offset:2px;animation:hzt 1.8s ease-in-out infinite}
+@keyframes hzt{50%{outline-color:#c4b5fd}}
+#v-att .hz-lg{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:11px;color:var(--mu);margin:12px 2px}
+#v-att .hz-lg span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:4px;margin-right:4px;background:var(--c)}
+#v-att .hz-ar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+#v-att .hz-b{min-height:50px;padding:4px 6px;border:0;border-radius:16px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,#6d28d9,#8b5cf6);box-shadow:0 5px 14px rgba(109,40,217,.3);animation:hzb2 3s ease-in-out infinite;transition:transform .15s}
+@keyframes hzb2{50%{transform:translateY(-2px)}}
+#v-att .hz-b.hz-gr{background:linear-gradient(135deg,#15803d,#22c55e)}#v-att .hz-b.hz-rd{background:linear-gradient(135deg,#b91c1c,#ef4444)}#v-att .hz-b.hz-yl{background:linear-gradient(135deg,#ca8a04,#facc15);color:#422006}#v-att .hz-b.hz-bl2{background:linear-gradient(135deg,#0369a1,#38bdf8)}#v-att .hz-b.hz-ln{background:var(--cd);color:var(--tx);border:1px solid var(--bd);box-shadow:none}
+#v-att .hz-cd{background:var(--cd);border:1px solid var(--bd);border-radius:20px;padding:14px;margin-top:12px}
+#v-att .hz-pr{height:12px;border-radius:9px;background:var(--bd);overflow:hidden;margin:12px 0}#v-att .hz-pr i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#7c3aed,#22c55e);animation:hzw 1s}
+@keyframes hzw{from{width:0!important}}
+#v-att .hz-rg{display:block;margin:auto}#v-att .hz-rg circle:last-of-type{animation:hzg 1.2s}@keyframes hzg{from{stroke-dashoffset:213.6}}
+#v-att .hz-rw{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--bd)}#v-att .hz-rw:last-child{border:0}
+#v-att .hz-wk{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}#v-att .hz-wk button{min-width:44px;min-height:44px;border-radius:14px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);font-weight:700}#v-att .hz-wk button.hz-on{background:linear-gradient(135deg,#6d28d9,#8b5cf6);color:#fff;border-color:transparent}
+#v-att input{width:100%;box-sizing:border-box;min-height:46px;margin-top:6px}
+.hz-ov{position:fixed;inset:0;z-index:99;background:rgba(20,10,40,.62);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;animation:hzo .25s}
+@keyframes hzo{from{opacity:0}}.hz-ov.hz-x{opacity:0;transition:opacity .25s}.hz-ov.hz-mid{align-items:center;padding:16px}
+.hz-cdx{position:relative;overflow:hidden;background:var(--cd);color:var(--tx);border-radius:26px 26px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:460px;text-align:center;animation:hzu .35s cubic-bezier(.2,1,.3,1)}
+.hz-mid .hz-cdx{border-radius:26px;max-width:340px;animation:hzpop .5s cubic-bezier(.2,1.5,.4,1)}
+@keyframes hzu{from{transform:translateY(60px);opacity:0}}@keyframes hzpop{from{transform:scale(.6);opacity:0}}
+.hz-cdx .hz-ar{grid-template-columns:1fr 1fr;margin-top:12px}.hz-cdx .hz-b{min-height:52px;font-size:15px}
+.hz-ok{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;font-size:42px;line-height:76px;margin:0 auto 10px;animation:hzpop .6s .15s both;box-shadow:0 0 0 0 rgba(34,197,94,.6)}
+.hz-cf{position:absolute;top:-14px;width:8px;height:13px;border-radius:2px;animation:hzc 2.3s linear infinite}
+@keyframes hzc{to{transform:translateY(460px) rotate(560deg);opacity:0}}
+.hz-cdx .hz-b{width:100%}.hz-cdx .hz-ar .hz-b{width:auto}.hz-cdx .hz-b+.hz-b{margin-top:8px}
+@media(prefers-reduced-motion:reduce){#v-att *,.hz-ov *{animation:none!important;transition:none!important}}`;
+function cal(){const{y,m}=V,n=new Date(y,m+1,0).getDate(),f=new Date(y,m,1).getDay(),t=TD();let h=WD.map(w=>`<i>${w}</i>`).join('')+'<span></span>'.repeat(f);
+ for(let i=1;i<=n;i++){const k=y+'-'+z(m+1)+'-'+z(i);h+=`<button class="hz-d hz-${st(k)}${k===t?' hz-t':''}" data-h="day" data-d="${k}">${i}</button>`}
+ return `<div class="hz-mn"><button data-h="nav" data-i="-1">◀</button><b>${MN[m]} ${y}</b><button data-h="nav" data-i="1">▶</button></div><div class="hz-cg ${V.dir}">${h}</div>
+<div class="hz-lg"><span style="--c:#15803d">Present</span><span style="--c:#b91c1c">Absent</span><span style="--c:#facc15">Holiday</span><span style="--c:#0369a1">Leave</span><span style="--c:#8b5cf6">Aaj</span><span style="--c:#9aa7b2">Aage ki date</span></div>
+<div class="hz-ar"><button class="hz-b hz-gr" data-h="mk" data-s="P">🟢 Mark Present</button><button class="hz-b hz-rd" data-h="mk" data-s="A">🔴 Mark Absent</button><button class="hz-b hz-yl" data-h="mk" data-s="H">🟡 Mark Holiday</button><button class="hz-b hz-ln" data-h="undo">↩ Undo</button><button class="hz-b" data-h="today">📅 Today</button><button class="hz-b" data-h="tab" data-t="rep">📊 View Report</button></div>`}
+function rep(){const s=stats(V.y,V.m),p=s.pc,g=D().g,rw=(a,b)=>`<div class="hz-rw"><span>${a}</span><b>${b}</b></div>`,C=213.6;
+ return `<div class="hz-mn"><button data-h="nav" data-i="-1">◀</button><b>${MN[V.m]} ${V.y}</b><button data-h="nav" data-i="1">▶</button></div><div class="hz-cd"><svg class="hz-rg" width="120" height="120" viewBox="0 0 80 80"><circle cx="40" cy="40" r="34" fill="none" stroke="var(--bd)" stroke-width="8"/><circle cx="40" cy="40" r="34" fill="none" stroke="#7c3aed" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p/100)}" transform="rotate(-90 40 40)"/><text x="40" y="46" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor">${p.toFixed(0)}%</text></svg><div class="hz-pr"><i style="width:${p}%"></i></div>
+${rw('🟢 Present',s.P+' din')}${rw('🔴 Absent (likha hua)',s.A+' din')}${rw('⚪ Likha nahi (beet chuke din)',s.U+' din')}${rw('🟡 Holiday / weekly off',s.hol+' din')}${rw('🔵 Leave',s.L+' din')}${rw('Working days',s.wk+' din')}${rw('Attendance',p.toFixed(2)+'%')}${g?rw('🎯 Target',s.P+' / '+g+' din'):''}${rw('🔥 Streak',streak()+' din')}${rw('🏆 Best month',best())}</div>`}
+function setg(){const a=D();return `<div class="hz-cd"><b>Weekly off (in din ki hazri nahi gini jaayegi)</b><div class="hz-wk">${WD.map((w,i)=>`<button data-h="wd" data-w="${i}" class="${a.w.includes(i)?'hz-on':''}">${w}</button>`).join('')}</div></div><div class="hz-cd"><label>Hazri kab se ginni hai<input type="date" id="hzS" value="${a.s}"></label><label style="display:block;margin-top:12px">Mahine ka target (din)<input type="number" id="hzG" inputmode="numeric" min="0" max="31" value="${a.g||''}"></label><p style="font-size:12px;color:var(--mu)">Custom holiday: calendar mein date par tap karke "Holiday" chuno. Hazri ka data backup aur restore mein judta hai.</p></div>`}
+function sheet(){const d=V.sh,r=D().d[d],x=st(d);return `<div class="hz-ov" data-h="close"><div class="hz-cdx"><b style="font-size:19px">${fmt(d,{day:'numeric',month:'long',year:'numeric'})}</b><div style="color:var(--mu)">${fmt(d,{weekday:'long'})}</div><p style="margin:10px 0">Status: <b>${r?NM[r.s]:x==='W'?'Weekly off':x==='U'?'Likha nahi':x==='F'?'Aage ki date':'—'}</b></p>${r?`<small style="color:var(--mu)">Record hui: ${ft(r.t)}<br>Aakhri badlav: ${ft(r.u)}</small>`:''}<div class="hz-ar">${[['P','hz-gr'],['A','hz-rd'],['H','hz-yl'],['L','hz-bl2']].map(([k,c])=>`<button class="hz-b ${c}" data-h="mks" data-s="${k}">${NM[k]}</button>`).join('')}</div>${r?'<button class="hz-b hz-ln" style="margin-top:10px" data-h="del">🗑 Hatao</button>':''}<button class="hz-b hz-ln" style="margin-top:8px" data-h="close">Band karo</button></div></div>`}
+function draw(){const el=Q('#v-att');if(!el||el.classList.contains('hid'))return;if(!Q('#hzcss'))document.head.insertAdjacentHTML('beforeend','<style id="hzcss">'+CSS+'</style>');
+ if(!V.y){const n=new Date();V.y=n.getFullYear();V.m=n.getMonth()}const s=stats(V.y,V.m),n=new Date(),tr=D().d[TD()],y0=scrollY;
+ el.innerHTML=`<div class="hz-hd"><span class="hz-bl" style="width:84px;height:84px;right:-18px;top:-22px"></span><span class="hz-bl" style="width:36px;height:36px;right:70px;top:70px;animation-delay:1.2s"></span><span class="hz-bl" style="width:22px;height:22px;left:40%;top:8px;animation-delay:2s"></span><div style="position:relative"><span class="hz-ic">📅</span> <span style="font-size:13px;opacity:.9">Namaste 👋</span></div><div style="position:relative;font-size:20px;font-weight:800;margin-top:2px">${n.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+<div class="hz-s3"><div><b data-c="${s.P}">${s.P}</b>🟢 Present</div><div><b data-c="${s.wk}">${s.wk}</b>📅 Working days</div><div><b data-c="${s.pc.toFixed(0)}" data-f="%">${s.pc.toFixed(0)}%</b>📊 Attendance</div></div>
+${tr?`<button class="hz-big done" data-h="day" data-d="${TD()}">${tr.s==='P'?'✅ Aaj: Present':'Aaj: '+NM[tr.s]+' (badalne ke liye tap)'}</button>`:`<button class="hz-big" data-h="mk" data-s="P">🟢 Aaj ki hazri lagao</button>`}</div>
+<div class="hz-tb">${[['cal','📅 Calendar'],['rep','📊 Report'],['set','⚙ Settings']].map(([k,l])=>`<button data-h="tab" data-t="${k}" class="${V.t===k?'hz-on':''}">${l}</button>`).join('')}</div>${V.t==='cal'?cal():V.t==='rep'?rep():setg()}`+(V.sh?sheet():'');
+ V.dir='';scrollTo(0,y0);if(V.an){V.an=0;QA('#v-att [data-c]').forEach(e=>{const to=+e.dataset.c,f=e.dataset.f||'',t0=performance.now(),k=t=>{const p=Math.min(1,(t-t0)/600);e.textContent=Math.round(to*p)+f;if(p<1)requestAnimationFrame(k)};requestAnimationFrame(k)})}}
+function win(){const k=TD(),s=stats(+k.slice(0,4),+k.slice(5,7)-1),c=Array.from({length:26},(_,i)=>`<i class="hz-cf" style="left:${(i*3.9)%100}%;background:${['#7c3aed','#22c55e','#facc15','#ef4444','#0ea5e9'][i%5]};animation-delay:${(i%7)*.16}s"></i>`).join('');
+ document.body.insertAdjacentHTML('beforeend',`<div class="hz-ov hz-mid" id="hzw"><div class="hz-cdx">${c}<div class="hz-ok">✓</div><h2 style="margin:0">🎉 Hazri lag gayi!</h2><p>${fmt(k,{day:'numeric',month:'long',year:'numeric'})} ki hazri darj ho gayi.<br>Aaj ka status: <b style="color:#15803d">PRESENT</b></p><p>Is mahine Present: <b id="hzn">${s.P}</b> din</p><button class="hz-b" data-h="done">Awesome! 🎉</button></div></div>`);
+ const e=Q('#hzn'),to=s.P,t0=performance.now(),f=t=>{const p=Math.min(1,(t-t0)/700);e.textContent=Math.round(to*p);if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+async function mark(d,s){const a=D(),cur=a.d[d];
+ if(d>TD()&&(s==='P'||s==='A'))return toast('Aage ki date par Present/Absent nahi lag sakta');
+ if(a.s&&d<a.s)return toast('Ye date hazri-shuru-date se pehle ki hai');
+ if(cur&&cur.s===s)return toast(d===TD()&&s==='P'?'Aaj ki hazri pehle se likhi hai':'Ye pehle se '+NM[s]+' hai');
+ if(cur&&!await ask(`${fd(d)} abhi "${NM[cur.s]}" hai. Badal kar "${NM[s]}" karein?`,{ok:'Badlo'}))return;
+ const n=Date.now();a.last={d,p:cur?{...cur}:null};a.d[d]={s,t:cur?cur.t:n,u:n};await sv();V.sh=null;V.an=1;draw();if(s==='P'&&d===TD())win();else toast(fd(d)+': '+NM[s]+' ✓')}
+const H={
+ tab:b=>{V.t=b.dataset.t;V.an=1;draw()},day:b=>{V.sh=b.dataset.d;draw()},
+ close:(b,e)=>{if(e.target!==b&&b.classList.contains('hz-ov')&&e.target.closest('.hz-cdx'))return;V.sh=null;draw()},
+ nav:b=>{const i=+b.dataset.i;V.dir=i>0?'hz-r':'';V.m+=i;if(V.m<0){V.m=11;V.y--}if(V.m>11){V.m=0;V.y++}V.an=1;draw()},
+ today:()=>{const n=new Date();V.dir=(n.getFullYear()*12+n.getMonth()<V.y*12+V.m)?'':'hz-r';V.y=n.getFullYear();V.m=n.getMonth();V.t='cal';V.an=1;draw()},
+ mk:b=>mark(TD(),b.dataset.s),mks:b=>mark(V.sh,b.dataset.s),
+ undo:async()=>{const a=D(),l=a.last;if(!l)return toast('Undo ke liye kuch nahi hai');if(l.p)a.d[l.d]=l.p;else delete a.d[l.d];a.last=null;await sv();V.an=1;draw();toast('Undo ✓ ('+fd(l.d)+')')},
+ del:async()=>{const a=D(),d=V.sh;if(!a.d[d]||!await ask(fd(d)+' ki hazri hata dein?',{ok:'Hatao'}))return;a.last={d,p:{...a.d[d]}};delete a.d[d];await sv();V.sh=null;V.an=1;draw();toast('Hata di ✓ (Undo kar sakte ho)')},
+ done:()=>{const w=Q('#hzw');if(!w)return;w.classList.add('hz-x');setTimeout(()=>w.remove(),260);draw()},
+ wd:async b=>{const a=D(),i=+b.dataset.w;a.w=a.w.includes(i)?a.w.filter(x=>x!==i):[...a.w,i];await sv();draw()}};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-h]');if(!b||!H[b.dataset.h])return;try{const r=H[b.dataset.h](b,e);if(r&&r.catch)r.catch(er=>toast('Error: '+er.message))}catch(er){toast('Error: '+er.message)}},true);
+document.addEventListener('change',async e=>{const i=e.target.id;if(i==='hzS'||i==='hzG'){const a=D();if(i==='hzS')a.s=e.target.value;else a.g=Math.max(0,Math.min(31,+e.target.value||0));await sv();draw()}});
+Q('main').insertAdjacentHTML('beforeend','<section id="v-att" class="hid"></section>');
+Q('nav button:nth-child(2)').insertAdjacentHTML('afterend','<button data-a="v:att"><span style="font-size:19px">📅</span>Hazri</button>');
+const _s=W.setv;W.setv=v=>{Q('#v-att').classList.toggle('hid',v!=='att');if(v==='att')V.an=1;_s(v)};
+const _i=W.imp;W.imp=async f=>{try{const j=JSON.parse(await f.text());if(j&&j.att&&j.att.d){const a=D();for(const k in j.att.d){const r=j.att.d[k];if(!a.d[k]||(r.u||0)>(a.d[k].u||0))a.d[k]=r}if(!a.s&&j.att.s)a.s=j.att.s;if(!a.w.length&&j.att.w)a.w=j.att.w;if(!a.g&&j.att.g)a.g=j.att.g;await sv()}}catch(e){}return _i(f)};
+const _r=W.render;W.render=()=>{_r();try{draw()}catch(e){console.error(e)}};
+})();
+</script>
+<script>
+(()=>{const W=window,_r=W.render;W.render=()=>{W._sc.clear();_r()}})();
+</script></body></html>
